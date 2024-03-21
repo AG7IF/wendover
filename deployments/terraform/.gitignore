@@ -1,2 +1,3 @@
+.awscli
 .terraform/
 .terraform.lock.hcl

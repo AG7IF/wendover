@@ -1,7 +1,6 @@
 resource "aws_amplify_app" "wendover" {
   name         = "wendover"
   repository   = var.amplify_repository
-  access_token = var.amplify_repository_access_token
 
   environment_variables = {
     AMPLIFY_DIFF_DEPLOY       = "false"
@@ -47,11 +46,6 @@ resource "aws_amplify_domain_association" "wendover" {
 
   sub_domain {
     branch_name = aws_amplify_branch.main.branch_name
-    prefix      = ""
-  }
-
-  sub_domain {
-    branch_name = aws_amplify_branch.main.branch_name
-    prefix      = "www"
+    prefix      = "encampment"
   }
 }
