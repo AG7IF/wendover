@@ -17,6 +17,11 @@ variable "amplify_repository" {
   default = "https://github.com/ag7if/wendover"
 }
 
+variable "amplify_repository_access_token" {
+  description = "The repository access token that Amplify will use to deploy the website"
+  default = ""
+}
+
 variable "wendover_domain" {
   description = "The domain name for weblair"
   default = ""
