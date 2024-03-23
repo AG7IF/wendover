@@ -1,1 +1,1 @@
-DROP TABLE activities;
+DROP TABLE wendover.activities;

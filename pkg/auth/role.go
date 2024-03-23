@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+
+	"github.com/ag7if/wendover/pkg"
 )
 
 type Role int
@@ -16,8 +18,6 @@ const (
 	AdminRole
 	StaffRole
 )
-
-var jsonNull = []byte("null")
 
 func ParseUserType(s string) Role {
 	switch strings.ToUpper(s) {
@@ -47,7 +47,7 @@ func (ut Role) String() string {
 
 func (ut Role) MarshalJSON() ([]byte, error) {
 	if ut == NilRole {
-		return jsonNull, nil
+		return pkg.JSONNull, nil
 	}
 	str := fmt.Sprintf("\"%s\"", ut)
 	return []byte(str), nil

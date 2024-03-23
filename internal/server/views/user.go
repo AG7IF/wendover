@@ -26,6 +26,7 @@ func NewRoleView(role auth.UserRole) RoleActivityNameView {
 type UserView struct {
 	ID       uuid.UUID                       `json:"id"`
 	Username string                          `json:"username"`
+	Email    string                          `json:"email"`
 	Roles    map[string]RoleActivityNameView `json:"roles,omitempty"`
 }
 
@@ -46,6 +47,7 @@ func (uv UserView) ToDomainObject() auth.User {
 	return auth.NewUser(
 		uv.ID,
 		uv.Username,
+		uv.Email,
 		nil, // Roles are not added through this view, so we just simply ignore whatever comes in here.
 	)
 }

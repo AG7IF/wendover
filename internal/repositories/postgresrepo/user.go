@@ -12,6 +12,7 @@ var usersTable = newTable(
 	"users",
 	[]string{
 		"username",
+		"email",
 	},
 	"username",
 )
@@ -19,10 +20,12 @@ var usersTable = newTable(
 func mapRowToUserMap(row scannable) (map[string]any, error) {
 	var id uuid.UUID
 	var username string
+	var email string
 
 	err := row.Scan(
 		&id,
 		&username,
+		&email,
 	)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -47,7 +50,7 @@ func (pr *PostgresRepository) InsertUser(user auth.User) (auth.User, error) {
 		return auth.User{}, errors.WithStack(processError("user", user.Username(), err))
 	}
 
-	row := stmt.QueryRow(user.Username())
+	row := stmt.QueryRow(user.Username(), user.Email())
 	insertedUser, err := mapRowToUserMap(row)
 	if err != nil {
 		return auth.User{}, errors.WithStack(processError("user", user.Username(), err))
@@ -61,6 +64,7 @@ func (pr *PostgresRepository) InsertUser(user auth.User) (auth.User, error) {
 	return auth.NewUser(
 		insertedUser["id"].(uuid.UUID),
 		insertedUser["username"].(string),
+		insertedUser["email"].(string),
 		nil,
 	), nil
 }
@@ -83,7 +87,11 @@ func (pr *PostgresRepository) SelectUsers() ([]auth.User, error) {
 			return nil, errors.WithStack(processError("user", "*", err))
 		}
 
-		user := auth.NewUser(userMap["id"].(uuid.UUID), userMap["username"].(string), nil)
+		user := auth.NewUser(
+			userMap["id"].(uuid.UUID),
+			userMap["username"].(string),
+			userMap["email"].(string),
+			nil)
 		users = append(users, user)
 	}
 	err = rows.Close()
@@ -130,7 +138,11 @@ func (pr *PostgresRepository) SelectUser(username string) (auth.User, error) {
 		userRoles[userRole.Activity().Key()] = userRole
 	}
 
-	return auth.NewUser(userMap["id"].(uuid.UUID), userMap["username"].(string), userRoles), nil
+	return auth.NewUser(
+		userMap["id"].(uuid.UUID),
+		userMap["username"].(string),
+		userMap["email"].(string),
+		userRoles), nil
 }
 
 func (pr *PostgresRepository) UpdateUser(username string, user auth.User) (auth.User, error) {
@@ -151,6 +163,7 @@ func (pr *PostgresRepository) UpdateUser(username string, user auth.User) (auth.
 
 	row := stmt.QueryRow(
 		user.Username(),
+		user.Email(),
 		id,
 	)
 	userMap, err := mapRowToUserMap(row)

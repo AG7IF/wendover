@@ -1,4 +1,4 @@
-CREATE SCHEMA wendover;
+CREATE SCHEMA IF NOT EXISTS wendover;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA wendover;
 

@@ -14,6 +14,9 @@ bin/wendover: $(foreach f, $(SRC), $(f))
 bin/wendsrv: $(foreach f, $(SRC), $(f))
 	go build ${LDFLAGS} -o bin/wendsrv cmd/wendsrv/main.go
 
+.PHONY: server
+server: bin/wendsrv
+
 .PHONY: install
 install: bin/wendover
 	go run build/wendover/install.go $(CURDIR)

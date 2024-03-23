@@ -1,3 +1,3 @@
-DROP TABLE user_roles;
-DROP TABLE users;
-DROP TYPE role;
+DROP TABLE wendover.user_roles;
+DROP TABLE wendover.users;
+DROP TYPE wendover.role;
