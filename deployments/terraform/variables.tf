@@ -28,3 +28,14 @@ variable "cognito_reply_to_email" {
   description = "The reply-to email address used for Cognito SES configuration"
   default = ""
 }
+
+# KMS configuration
+variable "aws_principal_arn" {
+  description = "ARN for the role that will own the KMS Key"
+  default = ""
+}
+
+variable "terraform_cloud_role_arn" {
+  description = "ARN for Terraform Cloud Role, used to allow TFC to manage the KMS key"
+  default = ""
+}
