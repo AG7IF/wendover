@@ -3,7 +3,7 @@ resource "aws_cognito_user_pool" "wendover" {
 
   deletion_protection = "ACTIVE"
 
-  username_attributes = {
+  username_configuration = {
     case_sensitive = false
   }
 
