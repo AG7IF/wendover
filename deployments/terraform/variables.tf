@@ -3,26 +3,28 @@ variable "region" {
   default     = "us-west-2"
 }
 
-variable "terraform_cloud_role_arn" {
-  description = "The ARN to use when granting permissions to the Terraform Cloud role"
+# DNS configuration
+variable "web_dns_zone_id" {
+  description = "The ID of the Route53 zone to which DNS CNAME records should be added"
 }
 
-variable "aws_principal_arn" {
-  description = "Value to use as the principal for IAM users for KMS keys"
+variable "web_full_domain" {
+  description = "The full domain—including subdomain—for the wendover web app"
   default = ""
 }
 
-variable "amplify_repository" {
-  description = "Git repository used with AWS Amplify"
-  default = "https://github.com/ag7if/wendover"
-}
-
-variable "amplify_repository_access_token" {
-  description = "The repository access token that Amplify will use to deploy the website"
+# Email configuration
+variable "cognito_from_email_arn" {
+  description = "ARN for the SES verified email identity that cognito will use for sending verification emails"
   default = ""
 }
 
-variable "wendover_domain" {
-  description = "The domain name for weblair"
+variable "cognito_from_email" {
+  description = "The email address used for Cognito SES configuration"
+  default = ""
+}
+
+variable "cognito_reply_to_email" {
+  description = "The reply-to email address used for Cognito SES configuration"
   default = ""
 }
