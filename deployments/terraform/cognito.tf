@@ -1,7 +1,7 @@
 resource "aws_cognito_user_pool" "wendover" {
   name = "wendover"
 
-  deletion_protection = ACTIVE
+  deletion_protection = "ACTIVE"
 
   username_attributes = {
     case_sensitive = false
