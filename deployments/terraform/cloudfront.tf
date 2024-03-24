@@ -1,4 +1,4 @@
-# Route53 DNS record
+# Route53 configuration
 resource "aws_route53_record" "wendover" {
   zone_id   =   var.web_dns_zone_id
   name      =   var.web_full_domain
@@ -7,7 +7,34 @@ resource "aws_route53_record" "wendover" {
   records   =   [aws_cloudfront_distribution.wendover_web.domain_name]
 }
 
-# S3 Buckets
+resource "aws_acm_certificate" "wendover" {
+  domain_name         =   var.web_full_domain
+  validation_method   =   "DNS"
+}
+
+resource "aws_route53_record" "wendover_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.wendover.domain_validation_options : dvo.domain_name => {
+      name    =   dvo.resource_record_name
+      record  =   dvo.resource_record_value
+      type    =   dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite =   true
+  name            =   each.value.name
+  records         =   [each.value.record]
+  ttl             =   60
+  type            =   each.value.type
+  zone_id         =   var.web_dns_zone_id
+}
+
+resource "aws_acm_certificate_validation" "wendover_validation" {
+  certificate_arn         =   aws_acm_certificate.wendover.arn
+  validation_record_fqdns =   [ for record in aws_route53_record.wendover_validation : record.fqdn ]
+}
+
+# S3 configuration
 resource "aws_s3_bucket" "wendover_logs" {
   bucket = "wendover-logs"
 }
