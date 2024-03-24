@@ -30,30 +30,30 @@ jobs:
       - checkout:
           path: ~/wendover
       - restore_cache:
-          key: dependency-cache{{ checksum "package-lock.json" }}
+          key: dependency-cache{{ checksum "yarn.lock" }}
       - run:
           name: install-packages
           command: yarn install
       - save_cache:
-          key: dependency-cache{{ checksum "package-lock.json" }}
+          key: dependency-cache{{ checksum "yarn.lock" }}
           paths:
             - ./node_modules
       - run:
           name: build-project
           command: yarn build
       - persist_to_workspace:
-          root: web
+          root: .
           paths:
             - ./dist
   deploy-web:
-    working_directory: ~/wendover
+    working_directory: ~/wendover/web
     docker:
       - image: cimg/base:2024.02
     steps:
       - attach_workspace:
-          at: ./web
+          at: .
       - aws-s3/sync:
-          from: ./web/dist
+          from: ./dist
           to: ${WENDOVER_WEB_BUCKET}
           arguments:
             --acl public-read \
