@@ -28,9 +28,6 @@ jobs:
       - checkout:
           path: ~/wendover
       - run:
-          name: enter-web-dir
-          command: "cd web"
-      - run:
           name: install-yarn
           command: "sudo npm install -g yarn"
       - restore_cache:
