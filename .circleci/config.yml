@@ -59,9 +59,7 @@ jobs:
       - aws-s3/sync:
           from: ./.output/public
           to: ${WENDOVER_WEB_BUCKET}
-          arguments:
-            --acl public-read \
-            --cache-control "max-age=86400"
+          arguments: --acl public-read --cache-control "max-age=86400"
 
 #  build-wendsrv:
 #    docker:
