@@ -22,6 +22,7 @@ workflows:
                 - derhabicht/1/deployment
           requires:
             - build-web
+
 jobs:
   build-web:
     working_directory: ~/wendover/web
@@ -53,9 +54,8 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - aws-cli/setup:
+      - aws-cli/role_arn_setup:
           role-arn: ${WENDOVER_ROLE_ARN}
-          aws-region: ${AWS_REGION}
       - aws-s3/sync:
           from: ./.output/public
           to: ${WENDOVER_WEB_BUCKET}
