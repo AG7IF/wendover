@@ -54,8 +54,9 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - aws-cli/role_arn_setup:
-          role-arn: ${WENDOVER_ROLE_ARN}
+      - aws-cli/setup:
+          role_arn: ${WENDOVER_ROLE_ARN}
+          aws_region: ${AWS_REGION}
       - aws-s3/sync:
           from: ./.output/public
           to: ${WENDOVER_WEB_BUCKET}
