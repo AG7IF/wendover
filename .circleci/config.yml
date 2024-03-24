@@ -19,6 +19,8 @@ workflows:
               only:
                 - main
                 - derhabicht/1/deployment
+          requires:
+            - build-web
 jobs:
   build-web:
     working_directory: ~/wendover/web
@@ -27,9 +29,6 @@ jobs:
     steps:
       - checkout:
           path: ~/wendover
-      - run:
-          name: install-yarn
-          command: "sudo npm install -g yarn"
       - restore_cache:
           key: dependency-cache{{ checksum "package-lock.json" }}
       - run:
