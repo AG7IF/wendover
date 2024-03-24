@@ -13,15 +13,21 @@ workflows:
               only:
                 - main
                 - develop
-                - derhabicht/1/deployment
       - deploy-web:
           filters:
             branches:
               only:
                 - main
-                - derhabicht/1/deployment
           requires:
             - build-web
+  backend:
+    jobs:
+      - build-wendsrv:
+          filters:
+            branches:
+              only:
+                - main
+                - develop
 
 jobs:
   build-web:
@@ -60,10 +66,8 @@ jobs:
           from: ./.output/public
           to: ${WENDOVER_WEB_BUCKET}
           arguments: --acl public-read --cache-control "max-age=86400"
-
-#  build-wendsrv:
-#    docker:
-#      - image: cimg/base:2024.02
-#    steps:
-#      - checkout
-#      -
+  build-wendsrv:
+    docker:
+      - image: cimg/base:2024.02
+    steps:
+      - checkout
