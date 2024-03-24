@@ -172,6 +172,8 @@ resource "aws_cloudfront_distribution" "wendover_web" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn       =   aws_acm_certificate.wendover.arn
+    minimum_protocol_version  =   "TLSv1.3"
+    ssl_support_method        =   "sni-only"
   }
 }
