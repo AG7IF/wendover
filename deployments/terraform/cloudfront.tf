@@ -12,7 +12,16 @@ resource "aws_s3_bucket" "wendover_logs" {
   bucket = "wendover-logs"
 }
 
+resource "aws_s3_bucket_ownership_controls" "wendover_logs" {
+  bucket = aws_s3_bucket.wendover_logs.bucket
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "wendover_logs" {
+  depends_on = [aws_s3_bucket_ownership_controls.wendover_logs]
+
   bucket = aws_s3_bucket.wendover_logs.id
   acl    = "private"
 }
@@ -21,7 +30,16 @@ resource "aws_s3_bucket" "wendover_web" {
   bucket = var.web_full_domain
 }
 
+resource "aws_s3_bucket_ownership_controls" "wendover_web" {
+  bucket = aws_s3_bucket.wendover_web.bucket
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "wendover_web" {
+  depends_on = [aws_cloudfront_origin_access_control.wendover_web]
+
   bucket = aws_s3_bucket.wendover_web.id
   acl    = "private"
 }
