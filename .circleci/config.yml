@@ -40,11 +40,11 @@ jobs:
             - ./node_modules
       - run:
           name: build-project
-          command: yarn build
+          command: npx nuxi generate
       - persist_to_workspace:
           root: .
           paths:
-            - ./dist
+            - ./.output/public
   deploy-web:
     working_directory: ~/wendover/web
     docker:
@@ -53,7 +53,7 @@ jobs:
       - attach_workspace:
           at: .
       - aws-s3/sync:
-          from: ./dist
+          from: ./.output/public
           to: ${WENDOVER_WEB_BUCKET}
           arguments:
             --acl public-read \
