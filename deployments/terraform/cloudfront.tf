@@ -47,7 +47,7 @@ resource "aws_cloudfront_distribution" "wendover_web" {
 
   logging_config {
     include_cookies   =   false
-    bucket            =   aws_s3_bucket.wendover_logs
+    bucket            =   aws_s3_bucket.wendover_logs.bucket
     prefix            =   "wendover"
   }
 
