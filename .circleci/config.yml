@@ -56,7 +56,6 @@ jobs:
           at: .
       - aws-cli/setup:
           role_arn: ${WENDOVER_ROLE_ARN}
-          aws_region: ${AWS_REGION}
       - aws-s3/sync:
           from: ./.output/public
           to: ${WENDOVER_WEB_BUCKET}
