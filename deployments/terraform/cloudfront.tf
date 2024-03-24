@@ -8,6 +8,7 @@ resource "aws_route53_record" "wendover" {
 }
 
 resource "aws_acm_certificate" "wendover" {
+  provider            =   aws.virgina
   domain_name         =   var.web_full_domain
   validation_method   =   "DNS"
 }
