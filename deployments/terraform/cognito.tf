@@ -42,7 +42,7 @@ resource "aws_cognito_user_pool_client" "wendover_web" {
 
   generate_secret = true
 
-  explicit_auth_flows     =   ["ALLOW_USER_SRP_AUTH"]
+  explicit_auth_flows     =   ["ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
   auth_session_validity   =    3 # minutes
   refresh_token_validity  =   30 # days
   access_token_validity   =    1 # 1 hour
