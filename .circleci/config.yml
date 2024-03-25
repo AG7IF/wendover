@@ -7,29 +7,59 @@ orbs:
 workflows:
   web:
     jobs:
+      - test-web
       - build-web:
           filters:
             branches:
               only:
-                - main
                 - develop
-      - deploy-web:
+                - main
+      - hold-web:
+          type: approval
+          requires:
+           - build-web
+      - deploy-web-prod:
+          requires:
+            - hold-web
           filters:
             branches:
               only:
                 - main
-          requires:
-            - build-web
-  backend:
+  wendsrv:
     jobs:
+      - test-wendover
       - build-wendsrv:
           filters:
             branches:
               only:
-                - main
                 - develop
+                - main
+      - hold-wendsrv:
+          type: approval
+          requires:
+            - build-wendsrv
+      - migrate-wendsrv-prod:
+          requires:
+            - hold-wendsrv
+          filters:
+            branches:
+              only:
+                - main
+      - deploy-wendsrv-prod:
+          requires:
+            - migrate-wendsrv-prod
 
 jobs:
+  test-web:
+    working_directory: ~/wendover/web
+    docker:
+      - image: cimg/node:21.6.2
+    steps:
+      - checkout:
+          path: ~/wendover
+      - run:
+          name: noop
+          echo: "Implement me"
   build-web:
     working_directory: ~/wendover/web
     docker:
@@ -53,7 +83,7 @@ jobs:
           root: .
           paths:
             - ./.output/public
-  deploy-web:
+  deploy-web-prod:
     working_directory: ~/wendover/web
     docker:
       - image: cimg/aws:2024.03
@@ -66,8 +96,56 @@ jobs:
           from: ./.output/public
           to: ${WENDOVER_WEB_BUCKET}
           arguments: --acl public-read --cache-control "max-age=86400"
-  build-wendsrv:
+  test-wendover:
+    working_directory: ~/go/src/wendover
     docker:
-      - image: cimg/base:2024.02
+      - image: cimg/go:1.22.1
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache{{ checksum "go.sum" }}
+      - run:
+          name: vendor
+          command: go mod vendor
+      - save_cache:
+          key: dependency-cache{{ checksum "go.sum" }}
+          paths:
+            - ./vendor
+      - run:
+          name: run-tests
+          command: make test
+  build-wendsrv:
+    working_directory: ~/go/src/wendover
+    docker:
+      - image: cimg/go:1.22.1
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache{{ checksum "go.sum" }}
+      - run:
+          name: vendor
+          command: go mod vendor
+      - save_cache:
+          key: dependency-cache{{ checksum "go.sum" }}
+          paths:
+            - ./vendor
+      - run:
+          name: build-container
+          command: make server
+      - run:
+          name:
+  migrate-wendsrv-prod:
+    docker:
+      - image: cimg/aws:2024.03
+    steps:
+      - run:
+          name: noop
+          echo: "Implement me"
+  deploy-wendsrv-prod:
+    docker:
+      - image: cimg/aws:2024.03
+    steps:
+      - run:
+          name: noop
+          echo: "Implement me"
+

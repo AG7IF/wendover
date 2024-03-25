@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 
+	"github.com/spf13/viper"
+
 	"github.com/ag7if/wendover/internal/cmd/wendsrv"
-	_ "github.com/ag7if/wendover/internal/config"
+	"github.com/ag7if/wendover/internal/config"
 )
 
 // BaseVersion is the SemVer-formatted string that defines the current version of wendsrv.
@@ -22,11 +24,13 @@ var GitRevision string
 var GitBranch string
 
 func main() {
-	wendsrv.Execute(fmt.Sprintf(
+	version := fmt.Sprintf(
 		"%s+%s.%s.%s",
 		BaseVersion,
 		GitBranch,
 		GitRevision,
 		BuildTime,
-	))
+	)
+	viper.Set(config.Version, version)
+	wendsrv.Execute(version)
 }

@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 
+	"github.com/spf13/viper"
+
 	"github.com/ag7if/wendover/internal/cmd/wendover"
+	"github.com/ag7if/wendover/internal/config"
 )
 
 // BaseVersion is the SemVer-formatted string that defines the current version of damx.
@@ -21,11 +24,13 @@ var GitRevision string
 var GitBranch string
 
 func main() {
-	wendover.Execute(fmt.Sprintf(
+	version := fmt.Sprintf(
 		"%s+%s.%s.%s",
 		BaseVersion,
 		GitBranch,
 		GitRevision,
 		BuildTime,
-	))
+	)
+	viper.Set(config.Version, version)
+	wendover.Execute(version)
 }

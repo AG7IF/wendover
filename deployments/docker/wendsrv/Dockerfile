@@ -13,6 +13,8 @@ COPY pkg/           pkg/
 COPY go.*           .
 COPY Makefile       .
 
-RUN make bin/wendsrv
+EXPOSE 8080
 
-CMD ["bash"]
+RUN make install_server
+
+CMD ["wendsrv", "run"]

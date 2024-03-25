@@ -25,6 +25,7 @@ func selectUserWithRoles(p preparer) (*sql.Stmt, error) {
 SELECT 
     users.id,
 	users.username,
+	users.email,
 	user_roles.role, 
 	activities.id, 
 	activities.key, 
@@ -52,6 +53,7 @@ WHERE users.username = $1
 func mapRowToUserMapWithRole(row scannable) (map[string]any, auth.UserRole, error) {
 	var userID uuid.UUID
 	var username string
+	var email string
 	var role auth.Role
 	var activityID uuid.UUID
 	var activityKey sql.NullString
@@ -67,6 +69,7 @@ func mapRowToUserMapWithRole(row scannable) (map[string]any, auth.UserRole, erro
 	err := row.Scan(
 		&userID,
 		&username,
+		&email,
 		&role,
 		&activityID,
 		&activityKey,
@@ -86,6 +89,7 @@ func mapRowToUserMapWithRole(row scannable) (map[string]any, auth.UserRole, erro
 	userMap := map[string]any{
 		"id":       userID,
 		"username": username,
+		"email":    email,
 	}
 
 	var userRole auth.UserRole

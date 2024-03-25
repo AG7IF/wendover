@@ -44,7 +44,7 @@ func NewServer(version string) (*Server, error) {
 }
 
 func (s *Server) setupRoutes(engine *gin.Engine, version string) {
-	v1 := engine.Group("/api.tf/v1")
+	v1 := engine.Group("/api/v1")
 
 	healthcheckHandler := handlers.NewHealthcheckHandler(version)
 	healthcheckHandler.SetupRoutes(v1)
