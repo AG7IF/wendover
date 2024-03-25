@@ -5,6 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 
 	"github.com/ag7if/wendover/build"
 	"github.com/ag7if/wendover/internal/config"
@@ -19,12 +20,9 @@ func CreateConfigDirectories() error {
 		"schemas",
 	}
 
-	cfgDir, err := config.CfgDir()
-	if err != nil {
-		return errors.WithStack(err)
-	}
+	cfgDir := viper.GetString(config.Directory)
 
-	err = build.CreateDir(cfgDir)
+	err := build.CreateDir(cfgDir)
 	if err != nil {
 		return errors.WithStack(err)
 	}

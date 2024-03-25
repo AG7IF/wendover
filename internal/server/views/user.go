@@ -39,6 +39,7 @@ func NewUserView(user auth.User) UserView {
 	return UserView{
 		ID:       user.ID(),
 		Username: user.Username(),
+		Email:    user.Email(),
 		Roles:    rvs,
 	}
 }

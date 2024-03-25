@@ -34,6 +34,7 @@ func mapRowToUserMap(row scannable) (map[string]any, error) {
 	userMap := map[string]any{
 		"id":       id,
 		"username": username,
+		"email":    email,
 	}
 
 	return userMap, nil

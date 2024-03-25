@@ -15,7 +15,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 
-	_ "github.com/ag7if/wendover/internal/config"
+	"github.com/ag7if/wendover/internal/config"
 	"github.com/ag7if/wendover/internal/database"
 	"github.com/ag7if/wendover/internal/logging"
 )
@@ -34,7 +34,7 @@ func reset(pollute bool) error {
 }
 
 func down() error {
-	log.Info().Str("database", viper.GetString("database.name")).Msg("migrating database down")
+	log.Info().Str("database", viper.GetString(config.DatabaseName)).Msg("migrating database down")
 	m, _, err := setup()
 	if err != nil {
 		return errors.WithStack(err)
@@ -49,13 +49,13 @@ func down() error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	log.Info().Str("database", viper.GetString("database.name")).Uint("version", version).Bool("dirty", dirty).Msg("migration complete")
+	log.Info().Str("database", viper.GetString(config.DatabaseName)).Uint("version", version).Bool("dirty", dirty).Msg("migration complete")
 
 	return nil
 }
 
 func up(pollute bool) error {
-	log.Info().Str("database", viper.GetString("database.name")).Msg("migrating database up")
+	log.Info().Str("database", viper.GetString(config.DatabaseName)).Msg("migrating database up")
 	m, p, err := setup()
 	if err != nil {
 		return errors.WithStack(err)
@@ -70,7 +70,7 @@ func up(pollute bool) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	log.Info().Str("database", viper.GetString("database.name")).Uint("version", version).Bool("dirty", dirty).Msg("migration complete")
+	log.Info().Str("database", viper.GetString(config.DatabaseName)).Uint("version", version).Bool("dirty", dirty).Msg("migration complete")
 
 	if pollute {
 		err = seed(p)
@@ -91,12 +91,12 @@ func seed(polluter *polluter.Polluter) error {
 		polluter = p
 	}
 
-	log.Info().Str("database", viper.GetString("database.name")).Msg("seeding database")
-	seedPath := viper.GetString("database.migration.seed")
+	log.Info().Str("database", viper.GetString(config.DatabaseName)).Msg("seeding database")
+	seedPath := viper.GetString(config.DatabaseMigrationSeed)
 
 	f, err := os.Open(seedPath)
 	if err != nil {
-		log.Error().Err(err).Str("database", viper.GetString("database.name")).Msg("unable to read database seed file")
+		log.Error().Err(err).Str("database", viper.GetString(config.DatabaseName)).Msg("unable to read database seed file")
 	}
 	defer f.Close()
 
@@ -112,7 +112,7 @@ func setup() (*migrate.Migrate, *polluter.Polluter, error) {
 	dbURL := database.GetDBUrl()
 	log.Debug().Str("url", dbURL).Msg("database connection created")
 
-	migrationsPath := viper.GetString("database.migration.source")
+	migrationsPath := viper.GetString(config.DatabaseMigrationSource)
 	log.Debug().Str("path", migrationsPath).Msg("migrations path identified")
 
 	m, err := migrate.New(migrationsPath, dbURL)

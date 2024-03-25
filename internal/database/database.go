@@ -7,30 +7,25 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+
+	"github.com/ag7if/wendover/internal/config"
 )
 
 func GetDBUrl() string {
-	_ = viper.ConfigFileUsed()
+	url := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s",
+		viper.GetString(config.DatabaseUser),
+		viper.GetString(config.DatabasePassword),
+		viper.GetString(config.DatabaseHost),
+		viper.GetString(config.DatabasePort),
+		viper.GetString(config.DatabaseName),
+	)
 
-	if viper.GetBool("database.ssl") {
-		return fmt.Sprintf(
-			"postgres://%s:%s@%s:%s/%s",
-			viper.GetString("database.user"),
-			viper.GetString("database.password"),
-			viper.GetString("database.host"),
-			viper.GetString("database.port"),
-			viper.GetString("database.name"),
-		)
+	if !viper.GetBool(config.DatabaseSSL) {
+		return fmt.Sprintf("%s?sslmode=disable", url)
 	}
 
-	return fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		viper.GetString("database.user"),
-		viper.GetString("database.password"),
-		viper.GetString("database.host"),
-		viper.GetString("database.port"),
-		viper.GetString("database.name"),
-	)
+	return url
 }
 
 func GetDB() (*sql.DB, error) {
