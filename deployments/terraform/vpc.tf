@@ -1,3 +1,4 @@
+/*
 resource "aws_vpc" "wendover" {
   cidr_block = "10.0.0.0/16"
 }
@@ -13,3 +14,4 @@ resource "aws_subnet" "wendover_db_azb" {
   cidr_block = "10.0.2.0/24"
   availability_zone = "${var.region}b"
 }
+*/
