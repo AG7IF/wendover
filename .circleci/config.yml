@@ -61,7 +61,7 @@ jobs:
           path: ~/wendover
       - run:
           name: noop
-          echo: "Implement me"
+          command: echo "Implement me"
   build-web:
     working_directory: ~/wendover/web
     docker:
@@ -148,12 +148,12 @@ jobs:
     steps:
       - run:
           name: noop
-          echo: "Implement me"
+          command: echo "Implement me"
   deploy-wendsrv-prod:
     docker:
       - image: cimg/aws:2024.03
     steps:
       - run:
           name: noop
-          echo: "Implement me"
+          command: echo "Implement me"
 
