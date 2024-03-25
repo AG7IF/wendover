@@ -35,22 +35,26 @@ resource "aws_kms_alias" "wendover" {
 }
 
 resource "aws_db_instance" "wendover" {
-  allocated_storage             = 20
-  ca_cert_identifier            = "rds-ca-ecc384-g1"
-  db_name                       = "wendover"
-  engine                        = "postgres"
-  engine_version                = "15.4"
-  identifier                    = "wendover-db"
-  instance_class                = "db.t3.micro"
-  manage_master_user_password   = true
-  master_user_secret_kms_key_id = aws_kms_key.wendover.id
-  username                      = "postgres"
+  allocated_storage                     =   20
+  ca_cert_identifier                    =   "rds-ca-ecc384-g1"
+  db_name                               =   "wendover"
+  engine                                =   "postgres"
+  engine_version                        =   "15.4"
+  identifier                            =   "wendover-db"
+  instance_class                        =   "db.t3.micro"
+  manage_master_user_password           =   true
+  master_user_secret_kms_key_id         =   aws_kms_key.wendover.id
+  username                              =   "postgres"
+  storage_encrypted                     =   true
+  iam_database_authentication_enabled   =   true
 
   tags = {
     Service = "wendover"
   }
 }
 
+
+/*
 resource "aws_db_subnet_group" "wendover" {
   name       = "wendover-dbsg"
   subnet_ids = [aws_subnet.wendover_db_aza.id, aws_subnet.wendover_db_azb.id]
@@ -59,3 +63,4 @@ resource "aws_db_subnet_group" "wendover" {
     Service = "wendover"
   }
 }
+*/
