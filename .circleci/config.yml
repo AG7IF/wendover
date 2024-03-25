@@ -36,6 +36,7 @@ workflows:
               only:
                 - develop
                 - main
+                - derhabicht/1/deployment
       - hold-wendsrv:
           type: approval
           requires:
