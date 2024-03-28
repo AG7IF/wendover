@@ -162,6 +162,7 @@ jobs:
             - aws-cli/setup:
                 role_arn: ${WENDOVER_ROLE_ARN}
           dockerfile: deployments/docker/wendsrv-lambda/Dockerfile
+          platform: linux/amd64
           push_image: true
           region: ${AWS_REGION}
           repo: ${ECR_REPO_NAME}

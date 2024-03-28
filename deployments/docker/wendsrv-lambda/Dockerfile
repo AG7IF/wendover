@@ -23,6 +23,7 @@ EXPOSE 8080
 RUN make lambda
 
 FROM public.ecr.aws/lambda/provided:al2023
+
 COPY --from=build /go/src/wendover/bin/wendsrv-migrate-lambda ./wendsrv-migrate-lambda
 
 ENV WENDOVER_CONFIG_DIRECTORY=DOZFAC
