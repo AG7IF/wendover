@@ -10,7 +10,7 @@ RUN mkdir internal
 RUN mkdir pkg
 RUN mkdir tools
 COPY .git/                          .git/
-COPY cmd/wendsrv-run-lambda/        cmd/wendsrv-run-lambda/
+# COPY cmd/wendsrv-run-lambda/        cmd/wendsrv-run-lambda/
 COPY cmd/wendsrv-migrate-lambda/    cmd/wendsrv-migrate-lambda/
 COPY internal/                      internal/
 COPY pkg/                           pkg/
