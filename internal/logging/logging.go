@@ -18,7 +18,7 @@ func InitLogging(loglevel string, console bool) {
 	}
 	lvl, err := zerolog.ParseLevel(loglevel)
 	if err != nil {
-		log.Error().Err(err).Str("loglevel", loglevel).Msg("failed to parse loglevel, defaulting to INFO")
+		log.Error().Stack().Err(err).Str("loglevel", loglevel).Msg("failed to parse loglevel, defaulting to INFO")
 		lvl = zerolog.InfoLevel
 	}
 

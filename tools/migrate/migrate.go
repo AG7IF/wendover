@@ -96,7 +96,7 @@ func seed(polluter *polluter.Polluter) error {
 
 	f, err := os.Open(seedPath)
 	if err != nil {
-		log.Error().Err(err).Str("database", viper.GetString(config.DatabaseName)).Msg("unable to read database seed file")
+		log.Error().Stack().Err(err).Str("database", viper.GetString(config.DatabaseName)).Msg("unable to read database seed file")
 	}
 	defer f.Close()
 
@@ -157,7 +157,7 @@ func main() {
 	}
 
 	if err != nil {
-		log.Error().Err(err).Str("command", cmd).Msg("problem encountered while running command")
+		log.Error().Stack().Err(err).Str("command", cmd).Msg("problem encountered while running command")
 		os.Exit(1)
 	}
 

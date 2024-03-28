@@ -25,7 +25,7 @@ func (ah *ActivityHandler) Create(c *gin.Context) {
 
 	err := c.BindJSON(av)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to bind activity view")
+		log.Error().Stack().Err(err).Msg("failed to bind activity view")
 		ResolveError(c, err)
 		return
 	}
@@ -34,7 +34,7 @@ func (ah *ActivityHandler) Create(c *gin.Context) {
 
 	res, err := ah.repo.InsertActivity(a)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to create new activity")
+		log.Error().Stack().Err(err).Msg("failed to create new activity")
 		ResolveError(c, err)
 		return
 	}
@@ -48,7 +48,7 @@ func (ah *ActivityHandler) FetchAll(c *gin.Context) {
 	// TODO: Query by authentication parameters
 	a, err := ah.repo.SelectActivities()
 	if err != nil {
-		log.Error().Err(err).Msg("failed to query activities")
+		log.Error().Stack().Err(err).Msg("failed to query activities")
 		ResolveError(c, err)
 	}
 
@@ -67,7 +67,7 @@ func (ah *ActivityHandler) Fetch(c *gin.Context) {
 
 	a, err := ah.repo.SelectActivity(key)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to query activity")
+		log.Error().Stack().Err(err).Msg("failed to query activity")
 		ResolveError(c, err)
 		return
 	}
@@ -82,7 +82,7 @@ func (ah *ActivityHandler) Update(c *gin.Context) {
 	av := &views.ActivityView{}
 	err := c.BindJSON(av)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to bind activity view")
+		log.Error().Stack().Err(err).Msg("failed to bind activity view")
 		ResolveError(c, err)
 		return
 	}
@@ -91,7 +91,7 @@ func (ah *ActivityHandler) Update(c *gin.Context) {
 
 	res, err := ah.repo.UpdateActivity(key, a)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to update activity")
+		log.Error().Stack().Err(err).Msg("failed to update activity")
 		ResolveError(c, err)
 		return
 	}
@@ -105,7 +105,7 @@ func (ah *ActivityHandler) Delete(c *gin.Context) {
 	key := strings.ToUpper(c.Param("key"))
 	err := ah.repo.DeleteActivity(key)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to delete activity")
+		log.Error().Stack().Err(err).Msg("failed to delete activity")
 		ResolveError(c, err)
 		return
 	}
