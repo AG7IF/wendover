@@ -24,10 +24,7 @@ EXPOSE 8080
 
 RUN make bin/wendsrv
 
-CMD ["wendsrv", "run"]
-
 FROM public.ecr.aws/lambda/provided:al2023
-COPY --from=build /go/src/wendover/bin/wendsrv ./wendsrv
-COPY --from=build /go/src/wendover/deployments/migrations ./migrations
+COPY --from=build /go/src/wendover/bin/wendsrv-migrate-lambda ./wendsrv-migrate-lambda
 
-CMD ["wendsrv", "run"]
+ENTRYPOINT ["./wendsrv-migrate-lambda"]
