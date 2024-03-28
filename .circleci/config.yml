@@ -30,6 +30,10 @@ workflows:
   wendsrv:
     jobs:
       - test-wendover
+      - build-hold-wendsrv:
+          type: approval
+          requires:
+            - build-wendsrv
       - build-wendsrv:
           requires:
             - test-wendover
@@ -39,7 +43,7 @@ workflows:
                 - develop
                 - main
                 - derhabicht/1/deployment
-      - hold-wendsrv:
+      - deploy-hold-wendsrv:
           type: approval
           requires:
             - build-wendsrv
