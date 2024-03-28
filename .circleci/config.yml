@@ -33,14 +33,13 @@ workflows:
       - build-hold-wendsrv:
           type: approval
           requires:
-            - build-wendsrv
+            - test-wendover
       - build-wendsrv:
           requires:
             - build-hold-wendsrv
           filters:
             branches:
               only:
-                - develop
                 - main
                 - derhabicht/1/deployment
       - deploy-hold-wendsrv:
