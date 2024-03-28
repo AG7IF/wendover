@@ -17,12 +17,16 @@ COPY tools/                     tools/
 COPY go.*                       .
 COPY Makefile                   .
 
+ENV WENDOVER_CONFIG_DIRECTORY=DOZFAC
+
 EXPOSE 8080
 
-RUN make install_server
+RUN make bin/wendsrv
 
 CMD ["wendsrv", "run"]
 
 FROM public.ecr.aws/lambda/provided:al2023
-COPY --from=build /go/bin/wendsrv ./wendsrv
-ENTRYPOINT ["./wendsrv"]
+COPY --from=build /go/src/wendover/bin/wendsrv ./wendsrv
+COPY --from=build /go/src/wendover/deployments/migrations ./migrations
+
+CMD ["wendsrv", "run"]
