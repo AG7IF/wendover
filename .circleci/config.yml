@@ -10,17 +10,22 @@ workflows:
     jobs:
       - test-web
       - build-web:
+          requires:
+            - test-web
           filters:
             branches:
               only:
                 - develop
                 - main
-      - hold-web:
+      - deploy-hold-web:
           type: approval
-          requires:
-           - build-web
+          filters:
+            branches:
+              only:
+                - main
       - deploy-web-prod:
           requires:
+            - build-web
             - hold-web
           filters:
             branches:

@@ -21,9 +21,8 @@ bin/wendsrv-migrate-lambda: $(foreach f, $(SRC), $(f))
 	go build ${LDFLAGS} -tags lambda.norpc -o bin/wendsrv-migrate-lambda cmd/wendsrv-migrate-lambda/main.go
 
 .PHONY: lambda
-lambda:
+lambda: bin/wendsrv-migrate-lambda
 	# $(MAKE) bin/wendsrv-run-lambda
-	$(MAKE) bin/wendsrv-migrate-lambda
 
 .PHONY: install
 install: bin/wendover
