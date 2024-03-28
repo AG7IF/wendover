@@ -1,8 +1,6 @@
 package wendsrv
 
 import (
-	"os"
-
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
@@ -19,14 +17,12 @@ var runCmd = &cobra.Command{
 func runRun(cmd *cobra.Command, args []string) {
 	router, err := server.NewServer(rootCmd.Version)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to create wendsrv service")
-		os.Exit(1)
+		log.Fatal().Err(err).Msg("failed to create wendsrv service")
 	}
 
 	err = router.Run("0.0.0.0:8080")
 	if err != nil {
-		log.Error().Err(err).Msg("failed to start wendsrv service")
-		os.Exit(1)
+		log.Fatal().Err(err).Msg("failed to start wendsrv service")
 	}
 }
 

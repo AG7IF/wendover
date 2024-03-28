@@ -18,6 +18,7 @@ COPY go.*                       .
 COPY Makefile                   .
 
 ENV WENDOVER_CONFIG_DIRECTORY=DOZFAC
+ENV WENDOVER_AWS_REGION=us-west-2
 
 EXPOSE 8080
 
