@@ -55,7 +55,7 @@ func down() error {
 }
 
 func up(pollute bool) error {
-	log.Info().Str("database", viper.GetString(config.DatabaseName)).Msg("migrating database up")
+	log.Info().Str("database", viper.GetString(config.DatabaseName)).Str("source", viper.GetString(config.DatabaseMigrationSource)).Msg("migrating database up")
 	m, p, err := setup()
 	if err != nil {
 		return errors.WithStack(err)
@@ -137,8 +137,7 @@ func main() {
 
 	cmd := flag.Arg(0)
 	if cmd == "" {
-		fmt.Println("Usage: go run migrate.go [--seed] [--loglevel=debug|info|warn|error] [up|down|reset|seed]")
-		os.Exit(1)
+		cmd = "up"
 	}
 
 	logging.InitLogging(*loglevel, true)
