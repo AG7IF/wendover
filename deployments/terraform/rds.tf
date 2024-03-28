@@ -32,10 +32,6 @@ EOT
 resource "aws_kms_alias" "wendover" {
   name          = "alias/wendover"
   target_key_id = aws_kms_key.wendover.key_id
-
-  tags = {
-    Service = "wendover"
-  }
 }
 
 resource "aws_db_subnet_group" "wendover" {
