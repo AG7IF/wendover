@@ -1,4 +1,4 @@
-FROM golang:1.22.1
+FROM golang:1.22.1 as build
 
 WORKDIR /go/src/wendover
 
@@ -22,3 +22,7 @@ EXPOSE 8080
 RUN make install_server
 
 CMD ["wendsrv", "run"]
+
+FROM public.ecr.aws/lambda/provided:al2023
+COPY --from=build /go/bin/wendsrv ./wendsrv
+ENTRYPOINT ["./wendsrv"]
