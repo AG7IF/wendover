@@ -26,7 +26,7 @@ workflows:
       - deploy-web-prod:
           requires:
             - build-web
-            - hold-web
+            - deploy-hold-web
           filters:
             branches:
               only:
