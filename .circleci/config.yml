@@ -145,12 +145,12 @@ jobs:
       - restore_cache:
           key: dependency-cache{{ checksum "go.sum" }}
       - run:
-          name: vendor
-          command: go mod vendor
+          name: Tidy
+          command: go mod tidy
       - save_cache:
           key: dependency-cache{{ checksum "go.sum" }}
           paths:
-            - ./vendor
+            - /go/src/pkg/
       - aws-ecr/build_and_push_image:
           account_id: ${AWS_ACCOUNT_ID}
           auth:
