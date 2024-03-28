@@ -33,7 +33,7 @@ func fetchFromParameterStore(cfg aws.Config) (map[string]string, error) {
 	params := make(map[string]string)
 	for _, v := range output.Parameters {
 		name := *v.Name
-		name = strings.Replace(name, "/wendover", "", 1)
+		name = strings.Replace(name, "/wendover/", "", 1)
 		name = strings.Replace(name, "/", ".", -1)
 
 		params[name] = *v.Value
