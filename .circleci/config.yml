@@ -45,7 +45,7 @@ workflows:
       - build-wendsrv:
           requires:
             - test-wendover
-            - build-hold-wendsrv
+            - build-hold-wendsrv-lambda
           filters:
             branches:
               only:
@@ -60,8 +60,8 @@ workflows:
                 - derhabicht/1/deployment
       - migrate-wendsrv-prod:
           requires:
-            - build-wendsrv
-            - deploy-hold-wendsrv
+            - build-wendsrv-lambda
+            - deploy-hold-wendsrv-lambda
           filters:
             branches:
               only:
@@ -69,7 +69,7 @@ workflows:
                 - derhabicht/1/deployment
       - deploy-wendsrv-prod:
           requires:
-            - migrate-wendsrv-prod
+            - migrate-wendsrv-lambda-prod
           filters:
             branches:
               only:
@@ -161,7 +161,7 @@ jobs:
           auth:
             - aws-cli/setup:
                 role_arn: ${WENDOVER_ROLE_ARN}
-          dockerfile: deployments/docker/wendsrv/Dockerfile
+          dockerfile: deployments/docker/wendsrv-lambda/Dockerfile
           push_image: true
           region: ${AWS_REGION}
           repo: ${ECR_REPO_NAME}
