@@ -45,7 +45,7 @@ workflows:
       - build-wendsrv:
           requires:
             - test-wendover
-            - build-hold-wendsrv-lambda
+            - build-hold-wendsrv
           filters:
             branches:
               only:
@@ -60,8 +60,8 @@ workflows:
                 - derhabicht/1/deployment
       - migrate-wendsrv-prod:
           requires:
-            - build-wendsrv-lambda
-            - deploy-hold-wendsrv-lambda
+            - build-wendsrv
+            - deploy-hold-wendsrv
           filters:
             branches:
               only:
@@ -69,7 +69,7 @@ workflows:
                 - derhabicht/1/deployment
       - deploy-wendsrv-prod:
           requires:
-            - migrate-wendsrv-lambda-prod
+            - migrate-wendsrv-prod
           filters:
             branches:
               only:
