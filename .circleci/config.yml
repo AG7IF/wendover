@@ -36,7 +36,7 @@ workflows:
             - build-wendsrv
       - build-wendsrv:
           requires:
-            - test-wendover
+            - build-hold-wendsrv
           filters:
             branches:
               only:
@@ -49,7 +49,7 @@ workflows:
             - build-wendsrv
       - migrate-wendsrv-prod:
           requires:
-            - hold-wendsrv
+            - deploy-hold-wendsrv
           filters:
             branches:
               only:
@@ -58,6 +58,10 @@ workflows:
       - deploy-wendsrv-prod:
           requires:
             - migrate-wendsrv-prod
+          filters:
+            branches:
+              only:
+                - main
 
 jobs:
   test-web:
