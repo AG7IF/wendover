@@ -165,7 +165,7 @@ jobs:
           push_image: true
           region: ${AWS_REGION}
           repo: ${ECR_REPO_NAME}
-          tag: wendsrv-${CIRCLE_BUILD_NUM},wendsrv-latest
+          tag: ${CIRCLE_BUILD_NUM},latest
   migrate-wendsrv-prod:
     working_directory: ~/go/src/wendover
     docker:
