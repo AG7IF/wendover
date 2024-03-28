@@ -38,7 +38,6 @@ workflows:
               only:
                 - develop
                 - main
-                - derhabicht/1/deployment
       - hold-wendsrv:
           type: approval
           requires:
@@ -50,6 +49,7 @@ workflows:
             branches:
               only:
                 - main
+                - derhabicht/1/deployment
       - deploy-wendsrv-prod:
           requires:
             - migrate-wendsrv-prod
@@ -146,12 +146,16 @@ jobs:
           repo: ${ECR_REPO_NAME}
           tag: wendsrv-${CIRCLE_BUILD_NUM},wendsrv-latest
   migrate-wendsrv-prod:
+    working_directory: ~/go/src/wendover
     docker:
       - image: cimg/aws:2024.03
     steps:
-      - run:
-          name: noop
-          command: echo "Implement me"
+      - checkout
+      - aws-cli/setup:
+          role_arn: ${WENDOVER_ROLE_ARN}
+      - aws-s3/sync:
+          from: ./deployments/migrations
+          to: ${WENDOVER_MIGRATIONS_BUCKET}
   deploy-wendsrv-prod:
     docker:
       - image: cimg/aws:2024.03

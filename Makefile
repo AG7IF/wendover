@@ -14,67 +14,25 @@ bin/wendover: $(foreach f, $(SRC), $(f))
 bin/wendsrv: $(foreach f, $(SRC), $(f))
 	go build ${LDFLAGS} -o bin/wendsrv cmd/wendsrv/main.go
 
-bin/wendmigrate: $(foreach f, $(SRC), $(f))
-	go build -o bin/wendmigrate tools/migrate/migrate.go
+bin/wendsrv-run-lambda: $(foreach f, $(SRC), $(f))
+	go build ${LDFLAGS} -tags lambda.norpc -o bin/wendsrv-run-lambda cmd/wendsrv-run-lambda/main.go
+
+bin/wendsrv-migrate-lambda: $(foreach f, $(SRC), $(f))
+	go build ${LDFLAGS} -tags lambda.norpc -o bin/wendsrv-migrate-lambda cmd/wendsrv-migrate-lambda/main.go
+
+.PHONY: lambda
+lambda:
+	# $(MAKE) bin/wendsrv-run-lambda
+	$(MAKE) bin/wendsrv-migrate-lambda
 
 .PHONY: install
 install: bin/wendover
 	go run build/wendover/install.go $(CURDIR)
 	cp bin/wendover ${HOME}/.local/bin/
 
-.PHONY: install_server
-install_server: bin/wendsrv bin/wendmigrate
-	mv bin/wendsrv ${GOPATH}/bin
-	mv bin/wendmigrate ${GOPATH}/bin
-
 .PHONY: build_wendsrv_docker
 server:
 	docker build -t wendsrv:latest -f deployments/docker/wendsrv/Dockerfile .
-
-.PHONY: prod_db_up
-prod_db_up:
-	wendsrv migrate
-
-.PHONY: dev_install
-dev_install: bin/wendover bin/wendsrv
-	mkdir -p ./testdata/config
-	mkdir -p ./testdata/cache
-	WENDOVER_CONFIG_DIRECTORY=./testdata/config WENDOVER_CACHE_DIRECTORY=./testdata/cache go run build/wendover/install.go $(CURDIR)
-	WENDOVER_CONFIG_DIRECTORY=./testdata/config WENDOVER_CACHE_DIRECTORY=./testdata/cache go run build/wendsrv/install.go $(CURDIR)
-
-.PHONY: dev_clean_install
-dev_clean_install: bin/wendover bin/wendsrv
-	-rm -r ./testdata
-	$(MAKE) dev_install
-
-.PHONY: dev_srv_run
-dev_srv_run: bin/wendsrv
-	WENDOVER_CONFIG_DIRECTORY=./testdata/config bin/wendsrv run
-
-.PHONY: dev_srv_run_docker
-dev_srv_run_docker: server
-	docker run \
-		--env WENDOVER_CONFIG_DIRECTORY=DOZFAC \
-		--env WENDOVER_DATABASE_HOST=host.docker.internal \
-		--env WENDOVER_DATABASE_PORT=5432 \
-		--env WENDOVER_DATABASE_NAME=wendover_dev \
-		--env WENDOVER_DATABASE_USER=postgres \
-		--env WENDOVER_DATABASE_PASSWORD=postgres \
-		--env WENDOVER_DATABASE_SSL=false \
-		--publish 127.0.0.1:8080:8080 \
-		wendsrv:latest
-
-.PHONY: dev_db_up
-dev_db_up:
-	cd tools/migrate/ && WENDOVER_CONFIG_DIRECTORY=../../testdata/config go run migrate.go up
-
-.PHONY: dev_db_down
-dev_db_down:
-	cd tools/migrate/ && WENDOVER_CONFIG_DIRECTORY=../../testdata/config go run migrate.go down
-
-.PHONY: dev_db_reset
-dev_db_reset:
-	cd tools/migrate/ && WENDOVER_CONFIG_DIRECTORY=../../testdata/config go run migrate.go reset
 
 .PHONY: test
 test:
