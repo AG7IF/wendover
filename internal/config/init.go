@@ -16,6 +16,7 @@ const (
 
 const (
 	Version                 = "version"
+	AWSRegion               = "aws.region"
 	Directory               = "config.directory"
 	DatabaseHost            = "database.host"
 	DatabasePort            = "database.port"
@@ -37,6 +38,7 @@ func initDefaults() {
 	// Defaults
 	viper.SetDefault(Version, "")
 	viper.SetDefault(Directory, filepath.Join(usrCfgDir, appName))
+	viper.SetDefault(AWSRegion, "")
 	viper.SetDefault(DatabaseHost, "localhost")
 	viper.SetDefault(DatabasePort, "5432")
 	viper.SetDefault(DatabaseName, "wendover_dev")
