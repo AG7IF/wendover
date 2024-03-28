@@ -14,18 +14,26 @@ bin/wendover: $(foreach f, $(SRC), $(f))
 bin/wendsrv: $(foreach f, $(SRC), $(f))
 	go build ${LDFLAGS} -o bin/wendsrv cmd/wendsrv/main.go
 
+bin/wendmigrate: $(foreach f, $(SRC), $(f))
+	go build -o bin/wendmigrate tools/migrate/migrate.go
+
 .PHONY: install
 install: bin/wendover
 	go run build/wendover/install.go $(CURDIR)
 	cp bin/wendover ${HOME}/.local/bin/
 
 .PHONY: install_server
-install_server: bin/wendsrv
+install_server: bin/wendsrv bin/wendmigrate
 	mv bin/wendsrv ${GOPATH}/bin
+	mv bin/wendmigrate ${GOPATH}/bin
 
-.PHONY: server
+.PHONY: build_wendsrv_docker
 server:
 	docker build -t wendsrv:latest -f deployments/docker/wendsrv/Dockerfile .
+
+.PHONY: prod_db_up
+prod_db_up:
+	wendsrv migrate
 
 .PHONY: dev_install
 dev_install: bin/wendover bin/wendsrv

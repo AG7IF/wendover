@@ -32,35 +32,64 @@ EOT
 resource "aws_kms_alias" "wendover" {
   name          = "alias/wendover"
   target_key_id = aws_kms_key.wendover.key_id
+
+  tags = {
+    Service = "wendover"
+  }
+}
+
+resource "aws_db_subnet_group" "wendover" {
+  name        =   "wendover-db"
+  subnet_ids  =   [aws_subnet.wendover_db_aza.id, aws_subnet.wendover_db_azb.id]
+}
+
+resource "aws_security_group" "wendover-db" {
+  name    =   "wendover-db"
+  vpc_id  =   aws_vpc.wendover.id
+
+  ingress {
+    from_port   =   5432
+    to_port     =   5432
+    protocol    =   "tcp"
+    cidr_blocks =   ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   =   5432
+    to_port     =   5432
+    protocol    =   "tcp"
+    cidr_blocks =   ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_db_parameter_group" "wendover" {
+  name = "wendover"
+  family = "postgres15"
 }
 
 resource "aws_db_instance" "wendover" {
-  allocated_storage                     =   20
-  ca_cert_identifier                    =   "rds-ca-ecc384-g1"
-  db_name                               =   "wendover"
-  engine                                =   "postgres"
-  engine_version                        =   "15.4"
   identifier                            =   "wendover-db"
   instance_class                        =   "db.t3.micro"
+  allocated_storage                     =   20
+  parameter_group_name                  =   aws_db_parameter_group.wendover.name
+  blue_green_update {
+    enabled = true
+  }
+
+  engine                                =   "postgres"
+  engine_version                        =   "15"
+
+  username                              =   "postgres"
   manage_master_user_password           =   true
   master_user_secret_kms_key_id         =   aws_kms_key.wendover.id
-  username                              =   "postgres"
-  storage_encrypted                     =   true
   iam_database_authentication_enabled   =   true
 
-  tags = {
-    Service = "wendover"
-  }
+  db_name                               =   "wendover"
+  storage_encrypted                     =   true
+
+  db_subnet_group_name                  =   aws_db_subnet_group.wendover.name
+  vpc_security_group_ids                =   [aws_security_group.wendover-db.id]
+
+  skip_final_snapshot                   =   true
+  apply_immediately                     =   true
 }
-
-
-/*
-resource "aws_db_subnet_group" "wendover" {
-  name       = "wendover-dbsg"
-  subnet_ids = [aws_subnet.wendover_db_aza.id, aws_subnet.wendover_db_azb.id]
-
-  tags = {
-    Service = "wendover"
-  }
-}
-*/
