@@ -22,7 +22,7 @@ ENV WENDOVER_AWS_REGION=us-west-2
 
 EXPOSE 8080
 
-RUN make bin/wendsrv
+RUN make lambda
 
 FROM public.ecr.aws/lambda/provided:al2023
 COPY --from=build /go/src/wendover/bin/wendsrv-migrate-lambda ./wendsrv-migrate-lambda
