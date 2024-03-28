@@ -102,7 +102,6 @@ resource "aws_iam_role" "wendover_db_migration" {
   managed_policy_arns = [aws_iam_policy.wendover_lambda_role_policy.arn]
 }
 
-/*
 resource "aws_lambda_function" "wendover_db_migration" {
   function_name   =   "wendover-migrate-db"
   package_type    =   "Image"
@@ -112,4 +111,3 @@ resource "aws_lambda_function" "wendover_db_migration" {
     entry_point =   ["./wendsrv-migrate-lambda"]
   }
 }
-*/
