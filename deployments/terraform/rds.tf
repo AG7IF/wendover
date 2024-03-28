@@ -94,7 +94,7 @@ resource "aws_db_instance" "wendover" {
 resource "aws_iam_role" "migrate_wendover_db" {
   name = "WendoverDBMigrationRole"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
-  managed_policy_arns = [aws_iam_policy.wendover_lambda_role_policy]
+  managed_policy_arns = [aws_iam_policy.wendover_lambda_role_policy.arn]
 }
 
 resource "aws_lambda_function" "migrate_wendover_db" {
