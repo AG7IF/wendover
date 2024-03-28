@@ -105,7 +105,7 @@ resource "aws_iam_role" "wendover_db_migration" {
 resource "aws_lambda_function" "wendover_db_migration" {
   function_name   =   "wendover-migrate-db"
   package_type    =   "Image"
-  image_uri       =   "712249788489.dkr.ecr.us-west-2.amazonaws.com/wendsrv:latest"
+  image_uri       =   "712249788489.dkr.ecr.us-west-2.amazonaws.com/wendover:latest"
   role            =   aws_iam_role.wendover_db_migration.arn
   image_config {
     entry_point =   ["./wendsrv-migrate-lambda"]
