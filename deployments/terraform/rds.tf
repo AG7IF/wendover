@@ -89,3 +89,16 @@ resource "aws_db_instance" "wendover" {
   skip_final_snapshot                   =   true
   apply_immediately                     =   true
 }
+
+
+resource "aws_iam_role" "migrate_wendover_db" {
+  name = "WendoverDBMigrationRole"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+  managed_policy_arns = [aws_iam_policy.wendover_lambda_role_policy]
+}
+
+resource "aws_lambda_function" "migrate_wendover_db" {
+  function_name   =   "wendover-migrate-db"
+  image_uri       =   "712249788489.dkr.ecr.us-west-2.amazonaws.com/ag7if:wendsrv-latest"
+  role            =   aws_iam_role.migrate_wendover_db.arn
+}
