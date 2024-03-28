@@ -50,20 +50,20 @@ func main() {
 
 	err := CreateConfigDirectories()
 	if err != nil {
-		log.Error().Err(err).Msg("failed to create config directories")
+		log.Error().Stack().Err(err).Msg("failed to create config directories")
 		os.Exit(1)
 	}
 
 	/*
 		err = CreateCacheDirectories()
 		if err != nil {
-			log.Error().Err(err).Msg("failed to create cache directories")
+			log.Error().Stack().Err(err).Msg("failed to create cache directories")
 			os.Exit(1)
 		}
 
 		err = CopyAssets()
 		if err != nil {
-			log.Error().Err(err).Msg("failed to copy assets")
+			log.Error().Stack().Err(err).Msg("failed to copy assets")
 			os.Exit(1)
 		}
 	*/

@@ -10,10 +10,21 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 
 	"github.com/ag7if/wendover/internal/config"
 )
+
+func setupLogging(cfg aws.Config) (func() error, error) {
+	logGroupName := viper.GetString(config.AWSLogGroupName)
+	logStreamName := viper.GetString(config.AWSLogStreamName)
+
+	writer := NewCloudWatchWriter(cfg, logGroupName, logStreamName, 1)
+	log.Logger = log.Output(writer)
+
+	return writer.Close, nil
+}
 
 func fetchFromParameterStore(cfg aws.Config) (map[string]string, error) {
 	client := ssm.NewFromConfig(cfg)
@@ -64,20 +75,25 @@ func fetchDBCredsFromSecretsManager(cfg aws.Config, secretName string) (map[stri
 	return creds, nil
 }
 
-func SetupConfigFromParameterStore() error {
+func SetupConfigFromParameterStore() (func() error, error) {
 	cfg, err := awscfg.LoadDefaultConfig(context.TODO(), awscfg.WithRegion(viper.GetString(config.AWSRegion)))
 	if err != nil {
-		return errors.WithStack(err)
+		return nil, errors.WithStack(err)
+	}
+
+	closer, err := setupLogging(cfg)
+	if err != nil {
+		return nil, errors.WithStack(err)
 	}
 
 	params, err := fetchFromParameterStore(cfg)
 	if err != nil {
-		return errors.WithStack(err)
+		return nil, errors.WithStack(err)
 	}
 
 	creds, err := fetchDBCredsFromSecretsManager(cfg, params["database.credentials"])
 	if err != nil {
-		return errors.WithStack(err)
+		return nil, errors.WithStack(err)
 	}
 
 	params[config.DatabaseUser] = creds["username"]
@@ -87,5 +103,5 @@ func SetupConfigFromParameterStore() error {
 		viper.Set(k, v)
 	}
 
-	return err
+	return closer, err
 }

@@ -26,7 +26,7 @@ func (uh *UserHandler) Create(c *gin.Context) {
 
 	err := c.BindJSON(av)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to bind user view")
+		log.Error().Stack().Err(err).Msg("failed to bind user view")
 		ResolveError(c, err)
 		return
 	}
@@ -35,7 +35,7 @@ func (uh *UserHandler) Create(c *gin.Context) {
 
 	res, err := uh.repo.InsertUser(u)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to create new user")
+		log.Error().Stack().Err(err).Msg("failed to create new user")
 		ResolveError(c, err)
 		return
 	}
@@ -48,7 +48,7 @@ func (uh *UserHandler) Create(c *gin.Context) {
 func (uh *UserHandler) FetchAll(c *gin.Context) {
 	a, err := uh.repo.SelectUsers()
 	if err != nil {
-		log.Error().Err(err).Msg("failed to query users")
+		log.Error().Stack().Err(err).Msg("failed to query users")
 		ResolveError(c, err)
 	}
 
@@ -67,7 +67,7 @@ func (uh *UserHandler) Fetch(c *gin.Context) {
 
 	u, err := uh.repo.SelectUser(username)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to query user")
+		log.Error().Stack().Err(err).Msg("failed to query user")
 		ResolveError(c, err)
 		return
 	}
@@ -82,7 +82,7 @@ func (uh *UserHandler) Update(c *gin.Context) {
 	uv := views.UserView{}
 	err := c.BindJSON(&uv)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to bind user view")
+		log.Error().Stack().Err(err).Msg("failed to bind user view")
 		ResolveError(c, err)
 		return
 	}
@@ -91,7 +91,7 @@ func (uh *UserHandler) Update(c *gin.Context) {
 
 	res, err := uh.repo.UpdateUser(username, u)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to update user")
+		log.Error().Stack().Err(err).Msg("failed to update user")
 		ResolveError(c, err)
 		return
 	}
@@ -105,7 +105,7 @@ func (uh *UserHandler) Delete(c *gin.Context) {
 	username := c.Param("username")
 	err := uh.repo.DeleteUser(username)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to delete user")
+		log.Error().Stack().Err(err).Msg("failed to delete user")
 		ResolveError(c, err)
 		return
 	}
@@ -119,7 +119,7 @@ func (uh *UserHandler) AddActivityRole(c *gin.Context) {
 	var role views.RoleActivityKeyView
 	err := c.BindJSON(&role)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to update user roles")
+		log.Error().Stack().Err(err).Msg("failed to update user roles")
 		ResolveError(c, err)
 		return
 	}
@@ -133,14 +133,14 @@ func (uh *UserHandler) AddActivityRole(c *gin.Context) {
 				"STAFF",
 			},
 		}
-		log.Error().Err(err).Msg("invalid role passed in request body")
+		log.Error().Stack().Err(err).Msg("invalid role passed in request body")
 		ResolveError(c, err)
 		return
 	}
 
 	user, err := uh.repo.AddUserRole(username, role.ActivityKey, role.Role)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to update user roles")
+		log.Error().Stack().Err(err).Msg("failed to update user roles")
 		ResolveError(c, err)
 		return
 	}
@@ -156,7 +156,7 @@ func (uh *UserHandler) RemoveActivityRole(c *gin.Context) {
 
 	user, err := uh.repo.RemoveUserRole(username, activityKey)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to update user roles")
+		log.Error().Stack().Err(err).Msg("failed to update user roles")
 		ResolveError(c, err)
 		return
 	}

@@ -17,6 +17,8 @@ const (
 const (
 	Version                 = "version"
 	AWSRegion               = "aws.region"
+	AWSLogGroupName         = "aws.log_group_name"
+	AWSLogStreamName        = "aws.log_stream_name"
 	Directory               = "config.directory"
 	DatabaseHost            = "database.host"
 	DatabasePort            = "database.port"
@@ -39,6 +41,8 @@ func initDefaults() {
 	viper.SetDefault(Version, "")
 	viper.SetDefault(Directory, filepath.Join(usrCfgDir, appName))
 	viper.SetDefault(AWSRegion, "")
+	viper.SetDefault(AWSLogGroupName, "/aws/lambda/wendover-migrate-db")
+	viper.SetDefault(AWSLogStreamName, "wendover-migrate-db")
 	viper.SetDefault(DatabaseHost, "localhost")
 	viper.SetDefault(DatabasePort, "5432")
 	viper.SetDefault(DatabaseName, "wendover_dev")
@@ -68,7 +72,7 @@ func initCfgFile() {
 		log.Warn().Err(err).Str("path", path).Msg("config file not found, creating a default config")
 		err = viper.WriteConfigAs(path)
 		if err != nil {
-			log.Error().Err(err).Msg("failed to create default config file")
+			log.Error().Stack().Err(err).Msg("failed to create default config file")
 		}
 	}
 }

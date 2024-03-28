@@ -27,9 +27,13 @@ func handler() error {
 }
 
 func main() {
-	err := aws.SetupConfigFromParameterStore()
+	closeLogs, err := aws.SetupConfigFromParameterStore()
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to setup config from AWS Parameter Store")
+		log.Fatal().Stack().Err(err).Msg("failed to setup config from AWS Parameter Store")
 	}
 	lambda.Start(handler)
+	err = closeLogs()
+	if err != nil {
+		log.Fatal().Stack().Err(err).Msg("failed to close out logs")
+	}
 }
