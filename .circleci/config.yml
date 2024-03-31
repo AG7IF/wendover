@@ -181,7 +181,7 @@ jobs:
           to: ${WENDOVER_MIGRATIONS_BUCKET}
       - run:
           name: invoke-lambda
-          command: aws lambda invoke --function-name=wendover-migrate-db --invocation-type="Event" /dev/null
+          command: aws lambda invoke --function-name=wendover-migrate-db --invocation-type="Event" /dev/stdout
   deploy-wendsrv-prod:
     docker:
       - image: cimg/aws:2024.03
