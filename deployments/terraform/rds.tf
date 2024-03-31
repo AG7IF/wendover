@@ -107,7 +107,6 @@ resource "aws_cloudwatch_log_group" "wendover_db_migration" {
   retention_in_days   =   14
 }
 
-
 resource "aws_lambda_function" "wendover_db_migration" {
   function_name   =   "wendover-migrate-db"
   package_type    =   "Image"
@@ -115,6 +114,11 @@ resource "aws_lambda_function" "wendover_db_migration" {
   role            =   aws_iam_role.wendover_db_migration.arn
   image_config {
     entry_point =   ["./wendsrv-migrate-lambda"]
+  }
+
+  vpc_config {
+    security_group_ids   =   [aws_security_group.wendover-db.id]
+    subnet_ids           =   [aws_subnet.wendover_db_aza.id, aws_subnet.wendover_db_azb.id]
   }
 
   logging_config {
