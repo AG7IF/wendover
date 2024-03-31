@@ -51,7 +51,12 @@ resource "aws_iam_policy" "wendover_lambda_role_policy" {
           "secretsmanager:CreateSecret",
           "secretsmanager:ListSecrets",
           "secretsmanager:GetRandomPassword",
-          "tag:GetResources"
+          "tag:GetResources",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:CreateNetworkInterface",
+          "ec2:DeleteNetworkInterface",
+          "ec2:DescribeInstances",
+          "ec2:AttachNetworkInterface"
         ],
         "Resource"  =   "*"
       },
