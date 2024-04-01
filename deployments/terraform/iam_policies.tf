@@ -17,9 +17,9 @@ resource "aws_iam_policy" "wendover_lambda_role_policy" {
     "Version"     =   "2012-10-17",
     "Statement"   =   [
       {
-        "Sid"     =   "SecretsManagerDbCredentialsAccess",
-        "Effect"  =   "Allow",
-        "Action"  =   [
+        "Sid" = "DBSecretsManagerAccess",
+        "Effect" = "Allow",
+        "Action" = [
           "secretsmanager:GetSecretValue",
           "secretsmanager:PutResourcePolicy",
           "secretsmanager:PutSecretValue",
@@ -27,92 +27,57 @@ resource "aws_iam_policy" "wendover_lambda_role_policy" {
           "secretsmanager:DescribeSecret",
           "secretsmanager:TagResource"
         ],
-        "Resource"  = "arn:aws:secretsmanager:*:*:secret:rds-db-credentials/*"
+        "Resource"  = "arn:aws:secretsmanager:${var.region}:${var.aws_account_id}:secret:rds!db*"
       },
       {
-        "Sid"     =   "RDSDataServiceAccess",
-        "Effect"  =   "Allow",
-        "Action"  =   [
-          "dbqms:CreateFavoriteQuery",
-          "dbqms:DescribeFavoriteQueries",
-          "dbqms:UpdateFavoriteQuery",
-          "dbqms:DeleteFavoriteQueries",
-          "dbqms:GetQueryString",
-          "dbqms:CreateQueryHistory",
-          "dbqms:DescribeQueryHistory",
-          "dbqms:UpdateQueryHistory",
-          "dbqms:DeleteQueryHistory",
+        "Sid"     = "ParameterStoreAccess",
+        "Effect"  = "Allow",
+        "Action"  = [
+          "ssm:GetParameter",
+          "ssm:GetParameterHistory",
+          "ssm:GetParameters",
+          "ssm:GetParametersByPath"
+        ],
+        "Resource" = "arn:aws:ssm:${var.region}:${var.aws_account_id}:parameter/wendover/*"
+
+      },
+      {
+        "Sid"     = "RDSDataServiceAccess",
+        "Effect"  = "Allow",
+        "Action"  = [
           "rds-data:ExecuteSql",
           "rds-data:ExecuteStatement",
           "rds-data:BatchExecuteStatement",
           "rds-data:BeginTransaction",
           "rds-data:CommitTransaction",
           "rds-data:RollbackTransaction",
-          "secretsmanager:CreateSecret",
-          "secretsmanager:ListSecrets",
-          "secretsmanager:GetRandomPassword",
-          "tag:GetResources",
+          "tag:GetResources"
+        ]
+        "Resource" = aws_db_instance.wendover.arn
+      },
+      {
+        "Sid"     = "AccessRDSSubnets"
+        "Effect"  = "Allow",
+        "Action"  = [
           "ec2:DescribeNetworkInterfaces",
           "ec2:CreateNetworkInterface",
           "ec2:DeleteNetworkInterface",
           "ec2:DescribeInstances",
           "ec2:AttachNetworkInterface"
         ],
-        "Resource"  =   "*"
+        "Resource" = aws_vpc.wendover.arn
       },
       {
-        "Sid"     =   "AllowDescribeOnAllLogGroups",
-        "Effect"  =   "Allow",
-        "Action": [
-          "logs:DescribeLogGroups"
-        ],
-        "Resource": [
-          "*"
-        ]
-      },
-      {
-        "Sid"     =   "AllowDescribeOfAllLogStreamsOnDmsTasksLogGroup",
-        "Effect"  =   "Allow",
-        "Action"  =   [
-          "logs:DescribeLogStreams"
-        ],
-        "Resource"  =   [
-          "arn:aws:logs:*:*:log-group:dms-tasks-*",
-          "arn:aws:logs:*:*:log-group:dms-serverless-replication-*"
-        ]
-      },
-      {
-        "Sid"     =   "AllowCreationOfDmsLogGroups",
-        "Effect"  =   "Allow",
-        "Action"  =   [
-          "logs:CreateLogGroup"
-        ],
-        "Resource"  =   [
-          "arn:aws:logs:*:*:log-group:dms-tasks-*",
-          "arn:aws:logs:*:*:log-group:dms-serverless-replication-*:log-stream:"
-        ]
-      },
-      {
-        "Sid"     =   "AllowCreationOfDmsLogStream",
-        "Effect"  =   "Allow",
-        "Action"  =   [
-          "logs:CreateLogStream"
-        ],
-        "Resource"  =   [
-          "arn:aws:logs:*:*:log-group:dms-tasks-*:log-stream:dms-task-*",
-          "arn:aws:logs:*:*:log-group:dms-serverless-replication-*:log-stream:dms-serverless-*"
-        ]
-      },
-      {
-        "Sid"     =   "AllowUploadOfLogEventsToDmsLogStream",
-        "Effect"  =   "Allow",
-        "Action"  =   [
+        "Sid"     = "CloudWatchAccess",
+        "Effect"  = "Allow",
+        "Action"  = [
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams",
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        "Resource"  =   [
-          "arn:aws:logs:*:*:log-group:dms-tasks-*:log-stream:dms-task-*",
-          "arn:aws:logs:*:*:log-group:dms-serverless-replication-*:log-stream:dms-serverless-*"
-        ]
+        "Resource" = "arn:aws:logs:${var.region}:${var.aws_account_id}:log-group:/aws/lambda/*"
       }
     ]
   })
