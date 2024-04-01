@@ -14,5 +14,3 @@ resource "aws_ecr_repository" "wendover" {
 resource "aws_ecs_cluster" "wendover" {
   name = "wendover"
 }
-
-resource "aws_ecs_task_definition" ""
