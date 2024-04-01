@@ -161,7 +161,7 @@ jobs:
           auth:
             - aws-cli/setup:
                 role_arn: ${WENDOVER_ROLE_ARN}
-          dockerfile: deployments/docker/wendsrv-lambda/Dockerfile
+          dockerfile: deployments/docker/wendsrv/Dockerfile
           platform: linux/amd64
           extra_build_args: "--provenance=false"
           push_image: true

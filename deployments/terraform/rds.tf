@@ -95,24 +95,3 @@ resource "aws_s3_bucket" "wendover_db_migration" {
   bucket = "wendover-migrations"
 
 }
-
-resource "aws_lambda_function" "wendover_db_migration" {
-  function_name   =   "wendover-migrate-db"
-  package_type    =   "Image"
-  image_uri       =   "${aws_ecr_repository.wendover.repository_url}:latest"
-  role            =   aws_iam_role.wendover_lambda_role.arn
-  image_config {
-    entry_point =   ["./wendsrv-migrate-lambda"]
-  }
-
-  vpc_config {
-    security_group_ids   =   [aws_security_group.wendover-db.id]
-    subnet_ids           =   [aws_subnet.wendover_db_aza.id, aws_subnet.wendover_db_azb.id]
-  }
-
-  logging_config {
-    log_format = "JSON"
-  }
-}
-
-

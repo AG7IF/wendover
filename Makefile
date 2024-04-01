@@ -20,14 +20,14 @@ bin/wendsrv-run-lambda: $(foreach f, $(SRC), $(f))
 bin/wendsrv-migrate-lambda: $(foreach f, $(SRC), $(f))
 	go build ${LDFLAGS} -tags lambda.norpc -o bin/wendsrv-migrate-lambda cmd/wendsrv-migrate-lambda/main.go
 
-.PHONY: lambda
-lambda: bin/wendsrv-migrate-lambda
-	# $(MAKE) bin/wendsrv-run-lambda
-
 .PHONY: install
 install: bin/wendover
 	go run build/wendover/install.go $(CURDIR)
 	cp bin/wendover ${HOME}/.local/bin/
+
+.PHONY: install_server
+install_server: bin/wendsrv
+	mv bin/wendsrv ${GOPATH}/bin/
 
 .PHONY: build_wendsrv_docker
 server:
