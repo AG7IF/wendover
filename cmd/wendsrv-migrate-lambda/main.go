@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 
 	"github.com/ag7if/wendover/internal/aws"
@@ -10,30 +9,43 @@ import (
 	_ "github.com/ag7if/wendover/internal/logging"
 )
 
-func handler() error {
+func handler() (map[string]string, error) {
+	closeLogs, err := aws.SetupConfigFromParameterStore()
+	if err != nil {
+		return map[string]string{
+			"status":  "error",
+			"message": "failed to set up config from param store",
+			"error":   err.Error(),
+		}, nil
+	}
+
 	migration, err := database.NewMigration()
 	if err != nil {
-		return errors.WithStack(err)
+		return map[string]string{
+			"status":  "error",
+			"message": "failed to set up config from param store",
+			"error":   err.Error(),
+		}, nil
 	}
 
 	version, err := migration.Up()
 	if err != nil {
-		return errors.WithStack(err)
+		return map[string]string{
+			"status":  "error",
+			"message": "failed to set up config from param store",
+			"error":   err.Error(),
+		}, nil
 	}
 
 	log.Info().Uint("version", version).Msg("successfully migrated database")
+	err = closeLogs()
 
-	return nil
+	return map[string]string{
+		"status":  "success",
+		"message": "successfully migrated database",
+	}, nil
 }
 
 func main() {
-	closeLogs, err := aws.SetupConfigFromParameterStore()
-	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("failed to setup config from AWS Parameter Store")
-	}
 	lambda.Start(handler)
-	err = closeLogs()
-	if err != nil {
-		log.Fatal().Stack().Err(err).Msg("failed to close out logs")
-	}
 }
