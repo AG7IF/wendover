@@ -28,8 +28,8 @@ data "aws_iam_policy_document" "wendover_ecs_task_role" {
       "kms:Decrypt"
     ]
     resources = [
-      aws_db_instance.wendover.master_user_secret.kms_key_id,
-      aws_db_instance.wendover.master_user_secret.secret_arn
+      aws_db_instance.wendover.master_user_secret[0].kms_key_id,
+      aws_db_instance.wendover.master_user_secret[0].secret_arn
     ]
   }
 

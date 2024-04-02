@@ -72,7 +72,7 @@ resource "aws_ecs_task_definition" "wendover_api"{
         },
         {
           name      = "WENDOVER_DATABASE_CREDENTIALS"
-          valueFrom = aws_db_instance.wendover.master_user_secret.secret_arn
+          valueFrom = aws_db_instance.wendover.master_user_secret[0].secret_arn
         },
         {
           name      = "WENDOVER_DATABASE_SSL"
