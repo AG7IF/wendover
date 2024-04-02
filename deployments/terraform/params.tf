@@ -43,7 +43,7 @@ resource "aws_ssm_parameter" "wendover-database-port" {
 resource "aws_ssm_parameter" "wendover-database-name" {
   name  = "/wendover/database/name"
   type  = "String"
-  value = aws_db_instance.wendover.name
+  value = aws_db_instance.wendover.db_name
 }
 
 resource "aws_ssm_parameter" "wendover-database-ssl" {
