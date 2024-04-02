@@ -26,7 +26,10 @@ type Migration struct {
 
 func NewMigration() (*Migration, error) {
 	migrationsPath := viper.GetString(config.DatabaseMigrationSource)
-	dbURL := GetDBUrl()
+	dbURL, err := GetDBUrl()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
 
 	m, err := migrate.New(migrationsPath, dbURL)
 	if err != nil {

@@ -113,10 +113,10 @@ func (ah *ActivityHandler) Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"msg": fmt.Sprintf("activity %s deleted", key)})
 }
 
-func (ah *ActivityHandler) SetupRoutes(router *gin.RouterGroup) {
-	router.POST("/activity", ah.Create)
-	router.GET("/activity", ah.FetchAll)
-	router.GET("/activity/:key", ah.Fetch)
-	router.PUT("/activity/:key", ah.Update)
-	router.DELETE("/activity/:key", ah.Delete)
+func (ah *ActivityHandler) SetupRoutes(router *gin.RouterGroup, auth gin.HandlerFunc) {
+	router.POST("/activity", auth, ah.Create)
+	router.GET("/activity", auth, ah.FetchAll)
+	router.GET("/activity/:key", auth, ah.Fetch)
+	router.PUT("/activity/:key", auth, ah.Update)
+	router.DELETE("/activity/:key", auth, ah.Delete)
 }

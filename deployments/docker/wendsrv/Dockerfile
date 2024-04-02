@@ -18,7 +18,6 @@ COPY Makefile       .
 EXPOSE 8080
 
 ENV WENDOVER_CONFIG_DIRECTORY=DOZFAC
-ENV WENDOVER_AWS_REGION=us-west-2
 
 RUN make install_server
 

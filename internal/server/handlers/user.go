@@ -166,12 +166,12 @@ func (uh *UserHandler) RemoveActivityRole(c *gin.Context) {
 	c.JSON(http.StatusOK, updated)
 }
 
-func (uh *UserHandler) SetupRoutes(router *gin.RouterGroup) {
-	router.POST("/user", uh.Create)
-	router.GET("/user", uh.FetchAll)
-	router.GET("/user/:username", uh.Fetch)
-	router.PUT("/user/:username", uh.Update)
-	router.DELETE("/user/:username", uh.Delete)
-	router.POST("/user/:username/activities", uh.AddActivityRole)
-	router.DELETE("/user/:username/activities/:key", uh.RemoveActivityRole)
+func (uh *UserHandler) SetupRoutes(router *gin.RouterGroup, auth gin.HandlerFunc) {
+	router.POST("/user", auth, uh.Create)
+	router.GET("/user", auth, uh.FetchAll)
+	router.GET("/user/:username", auth, uh.Fetch)
+	router.PUT("/user/:username", auth, uh.Update)
+	router.DELETE("/user/:username", auth, uh.Delete)
+	router.POST("/user/:username/activities", auth, uh.AddActivityRole)
+	router.DELETE("/user/:username/activities/:key", auth, uh.RemoveActivityRole)
 }

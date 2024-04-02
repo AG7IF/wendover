@@ -1,3 +1,4 @@
+# AWS Configuration
 variable "aws_account_id" {
   description =   "AWS Account ID"
   default     =   ""
@@ -6,6 +7,12 @@ variable "aws_account_id" {
 variable "region" {
   description = "AWS region"
   default     = "us-west-2"
+}
+
+# Parameters
+variable "api_root_path" {
+  description = "Root path for the API endpoint"
+  default     = "/api/v1"
 }
 
 # DNS configuration

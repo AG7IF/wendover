@@ -22,6 +22,6 @@ func (hch *HealthcheckHandler) Healthcheck(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (hch *HealthcheckHandler) SetupRoutes(router *gin.RouterGroup) {
+func (hch *HealthcheckHandler) SetupRoutes(router *gin.RouterGroup, auth gin.HandlerFunc) {
 	router.GET("/healthcheck", hch.Healthcheck)
 }
