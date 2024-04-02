@@ -16,10 +16,11 @@ COPY go.*           .
 COPY Makefile       .
 
 EXPOSE 22
-EXPOSE 8080
+EXPOSE 80
 
-ENV GIN_MODE=release
 ENV WENDOVER_CONFIG_DIRECTORY=DOZFAC
+ENV WENDOVER_SERVER_ROOT_PATH='0.0.0.0:80'
+ENV GIN_MODE=release
 
 RUN make install_server
 

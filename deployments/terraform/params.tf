@@ -58,12 +58,6 @@ resource "aws_ssm_parameter" "wendover-database-migration-source" {
   value = "s3://${aws_s3_bucket.wendover_db_migration.bucket}"
 }
 
-resource "aws_ssm_parameter" "wendover-server-run_address" {
-  name  = "/wendover/server/run_address"
-  type  = "String"
-  value = var.api_run_address
-}
-
 resource "aws_ssm_parameter" "wendover-server-root_path" {
   name  = "/wendover/server/root_path"
   type  = "String"

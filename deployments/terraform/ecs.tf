@@ -35,7 +35,7 @@ resource "aws_ecs_task_definition" "wendover_api"{
           hostPort      = 22
         },
         {
-          containerPort = 8080
+          containerPort = 80
           hostPort      = 80
         }
       ]

@@ -10,11 +10,6 @@ variable "region" {
 }
 
 # Parameters
-variable "api_run_address" {
-  description = "IP address and port to pass to the Gin Server.Run() method."
-  default     = "0.0.0.0:8080"
-}
-
 variable "api_root_path" {
   description = "Root path for the API endpoint"
   default     = "/api/v1"
