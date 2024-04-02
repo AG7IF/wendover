@@ -87,7 +87,7 @@ func init() {
 	initDefaults()
 	initEnv()
 
-	// To skip initiation of the config file, set the WENDOVER_CONFIF_DIRECTORY environment variable to DOZFAC
+	// To skip initiation of the config file, set the WENDOVER_CONFIG_DIRECTORY environment variable to DOZFAC
 	// (DOZen FACtors, i.e. set this up as a 12-factor application).
 	if viper.GetString(Directory) != "DOZFAC" {
 		initCfgFile()

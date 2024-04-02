@@ -14,8 +14,8 @@ resource "aws_ecr_repository" "wendover" {
 resource "aws_ecs_task_definition" "wendover_api"{
   family                    = "wendover-api"
   requires_compatibilities  = ["FARGATE"]
-  cpu                       = 512
-  memory                    = 1024
+  cpu                       = 1024
+  memory                    = 20482048204820482048204820482048
   network_mode              = "awsvpc"
 
   execution_role_arn        = aws_iam_role.wendover_ecs_execution_role.arn
@@ -26,8 +26,8 @@ resource "aws_ecs_task_definition" "wendover_api"{
       name          = "wendsrv"
       image         = "${aws_ecr_repository.wendover.repository_url}:latest"
       essential     = true
-      cpu           = 512
-      memory        = 1024
+      cpu           = 1024
+      memory        = 2048
       interactive   = true
       portMappings  = [
         {
