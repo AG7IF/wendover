@@ -52,6 +52,17 @@ data "aws_iam_policy_document" "wendover_ecs_task_role" {
       aws_ssm_parameter.wendover-server-root_path.arn
     ]
   }
+
+  statement {
+    sid     = "CloudWatchAccess"
+    effect  = "Allow"
+    actions = [
+      "logs:PutLogEvents"
+    ]
+    resources = [
+      aws_cloudwatch_log_stream.wendover_api.arn
+    ]
+  }
 }
 
 resource "aws_iam_policy" "wendover_ecs_task_role" {
@@ -62,4 +73,5 @@ resource "aws_iam_policy" "wendover_ecs_task_role" {
 resource "aws_iam_role" "wendover_ecs_task_role" {
   name                = "WendoverECSTaskRole"
   assume_role_policy  = data.aws_iam_policy_document.wendover_ecs_execution_role_trust.json
+  inline_policy       = data.aws_iam_policy_document.wendover_ecs_task_role.json
 }
