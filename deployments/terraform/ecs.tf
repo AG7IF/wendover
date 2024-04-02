@@ -16,6 +16,7 @@ resource "aws_ecs_task_definition" "wendover_api"{
   requires_compatibilities  = ["FARGATE"]
   cpu                       = 512
   memory                    = 1024
+  network_mode              = "awsvpc"
 
   execution_role_arn        = aws_iam_role.wendover_ecs_execution_role.arn
   task_role_arn             = aws_iam_role.wendover_ecs_task_role.arn
@@ -28,7 +29,6 @@ resource "aws_ecs_task_definition" "wendover_api"{
       cpu           = 512
       memory        = 1024
       interactive   = true
-      network_mode  = "awsvpc"
       portMappings  = [
         {
           containerPort = 22
