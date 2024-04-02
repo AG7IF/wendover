@@ -15,7 +15,7 @@ resource "aws_ecs_task_definition" "wendover_api"{
   family                    = "wendover-api"
   requires_compatibilities  = ["FARGATE"]
   cpu                       = 1024
-  memory                    = 20482048204820482048204820482048
+  memory                    = 2048
   network_mode              = "awsvpc"
 
   execution_role_arn        = aws_iam_role.wendover_ecs_execution_role.arn
