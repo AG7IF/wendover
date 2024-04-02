@@ -1,7 +1,7 @@
 resource "aws_ssm_parameter" "wendover-aws-cognito-iss" {
   name  = "/wendover/aws/cognito/iss"
   type  = "String"
-  value = "" // TODO: Configure value
+  value = "https://cognito-idp.${var.region}.amazonaws.com/${aws_cognito_user_pool.wendover.id}"
 }
 
 resource "aws_ssm_parameter" "wendover-aws-cognito-userpool_id" {
