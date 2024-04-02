@@ -100,7 +100,7 @@ resource "aws_ecs_task_definition" "wendover_api"{
           awslogs-group         = aws_cloudwatch_log_group.wendover.name_prefix
           awslogs-region        = var.region
           awslogs-stream-prefix = aws_cloudwatch_log_stream.wendover_api.name
-          awslogs-create-group  = false
+          awslogs-create-group  = "false"
         }
       }
     }
