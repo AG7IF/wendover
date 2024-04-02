@@ -41,6 +41,7 @@ workflows:
             branches:
               only:
                 - main
+                - derhabicht/1/deployment
       - build-wendsrv:
           requires:
             - test-wendover
