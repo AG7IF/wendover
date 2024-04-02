@@ -18,7 +18,6 @@ resource "aws_iam_role" "wendover_ecs_execution_role" {
   managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"]
 }
 
-
 data "aws_iam_policy_document" "wendover_ecs_task_role" {
   statement {
     sid     = "SecretsManagerAccess"

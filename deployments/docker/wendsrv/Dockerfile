@@ -15,8 +15,10 @@ COPY tools/         tools/
 COPY go.*           .
 COPY Makefile       .
 
+EXPOSE 22
 EXPOSE 8080
 
+ENV GIN_MODE=release
 ENV WENDOVER_CONFIG_DIRECTORY=DOZFAC
 
 RUN make install_server

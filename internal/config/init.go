@@ -29,6 +29,7 @@ const (
 	DatabaseSSL             = "database.ssl"
 	DatabaseMigrationSource = "database.migration.source"
 	DatabaseMigrationSeed   = "database.migration.seed"
+	ServerRunAddress        = "server.run_address"
 	ServerRootPath          = "server.root_path"
 )
 
@@ -54,6 +55,7 @@ func initDefaults() {
 	viper.SetDefault(DatabaseSSL, false)
 	viper.SetDefault(DatabaseMigrationSource, "file:///path/to/migrations")
 	viper.SetDefault(DatabaseMigrationSeed, "/path/to/seed")
+	viper.SetDefault(ServerRunAddress, "0.0.0.0:8080")
 	viper.SetDefault(ServerRootPath, "/api/v1")
 }
 

@@ -3,7 +3,9 @@ package wendsrv
 import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
+	"github.com/ag7if/wendover/internal/config"
 	"github.com/ag7if/wendover/internal/server"
 )
 
@@ -20,7 +22,7 @@ func runRun(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("failed to create wendsrv service")
 	}
 
-	err = router.Run("0.0.0.0:8080")
+	err = router.Run(viper.GetString(config.ServerRunAddress))
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to start wendsrv service")
 	}

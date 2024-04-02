@@ -22,12 +22,18 @@ resource "aws_ecs_task_definition" "wendover_api"{
 
   container_definitions     = jsonencode([
     {
-      name      = "wendsrv"
-      image     = "${aws_ecr_repository.wendover.repository_url}:latest"
-      essential = true
-      cpu       = 512
-      memory    = 1024
-      portMappings = [
+      name          = "wendsrv"
+      image         = "${aws_ecr_repository.wendover.repository_url}:latest"
+      essential     = true
+      cpu           = 512
+      memory        = 1024
+      interactive   = true
+      network_mode  = "awsvpc"
+      portMappings  = [
+        {
+          containerPort = 22
+          hostPort      = 22
+        },
         {
           containerPort = 8080
           hostPort      = 80
@@ -109,6 +115,18 @@ resource "aws_ecs_service" "wendover_api" {
   name            = "wendover-api"
   cluster         = aws_ecs_cluster.wendover.id
   task_definition = aws_ecs_task_definition.wendover_api.arn
-  desired_count   =  1
-  iam_role        =
+  desired_count   = 1
+
+  network_configuration {
+    subnets  = [
+      aws_subnet.wendover_a.id,
+      aws_subnet.wendover_b.id,
+      aws_subnet.wendover_c.id,
+      aws_subnet.wendover_d.id
+    ]
+    security_groups = [
+      aws_security_group.wendover_api.id,
+      aws_security_group.wendover_db.id
+    ]
+  }
 }
