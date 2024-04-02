@@ -106,6 +106,9 @@ resource "aws_ecs_cluster" "wendover" {
 }
 
 resource "aws_ecs_service" "wendover_api" {
-  name    = "wendover-api"
-  cluster = aws_ecs_cluster.wendover.id
+  name            = "wendover-api"
+  cluster         = aws_ecs_cluster.wendover.id
+  task_definition = aws_ecs_task_definition.wendover_api.arn
+  desired_count   =  1
+  iam_role        =
 }

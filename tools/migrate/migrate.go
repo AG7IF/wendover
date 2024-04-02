@@ -109,7 +109,10 @@ func seed(polluter *polluter.Polluter) error {
 }
 
 func setup() (*migrate.Migrate, *polluter.Polluter, error) {
-	dbURL := database.GetDBUrl()
+	dbURL, err := database.GetDBUrl()
+	if err != nil {
+		return nil, nil, errors.WithStack(err)
+	}
 	log.Debug().Str("url", dbURL).Msg("database connection created")
 
 	migrationsPath := viper.GetString(config.DatabaseMigrationSource)
