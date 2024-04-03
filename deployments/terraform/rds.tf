@@ -37,29 +37,30 @@ resource "aws_db_parameter_group" "wendover" {
 }
 
 resource "aws_db_instance" "wendover" {
-  identifier                            =   "wendover-db"
-  instance_class                        =   "db.t3.micro"
-  allocated_storage                     =   20
-  parameter_group_name                  =   aws_db_parameter_group.wendover.name
+  identifier                            = "wendover-db"
+  instance_class                        = "db.t3.micro"
+  availability_zone                     = "${var.region}a"
+  allocated_storage                     = 20
+  parameter_group_name                  = aws_db_parameter_group.wendover.name
   blue_green_update {
     enabled = true
   }
 
-  engine                                =   "postgres"
-  engine_version                        =   "15"
+  engine                                = "postgres"
+  engine_version                        = "15"
 
-  username                              =   "postgres"
-  manage_master_user_password           =   true
-  master_user_secret_kms_key_id         =   aws_kms_key.wendover.id
+  username                              = "postgres"
+  manage_master_user_password           = true
+  master_user_secret_kms_key_id         = aws_kms_key.wendover.id
 
-  db_name                               =   "wendover"
-  storage_encrypted                     =   true
+  db_name                               = "wendover"
+  storage_encrypted                     = true
 
-  db_subnet_group_name                  =   aws_db_subnet_group.wendover.name
-  vpc_security_group_ids                =   [aws_security_group.wendover_db.id]
+  db_subnet_group_name                  = aws_db_subnet_group.wendover.name
+  vpc_security_group_ids                = [aws_security_group.wendover_db.id]
 
-  skip_final_snapshot                   =   true
-  apply_immediately                     =   true
+  skip_final_snapshot                   = true
+  apply_immediately                     = true
 }
 
 resource "aws_s3_bucket" "wendover_db_migration" {

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net/url"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pkg/errors"
@@ -26,20 +27,20 @@ func GetDBUrl() (string, error) {
 		return "", errors.WithStack(err)
 	}
 
-	url := fmt.Sprintf(
+	dbUrl := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s",
-		credentials.Username,
-		credentials.Password,
+		url.QueryEscape(credentials.Username),
+		url.QueryEscape(credentials.Password),
 		viper.GetString(config.DatabaseHost),
 		viper.GetString(config.DatabasePort),
 		viper.GetString(config.DatabaseName),
 	)
 
 	if !viper.GetBool(config.DatabaseSSL) {
-		return fmt.Sprintf("%s?sslmode=disable", url), nil
+		return fmt.Sprintf("%s?sslmode=disable", dbUrl), nil
 	}
 
-	return url, nil
+	return dbUrl, nil
 }
 
 func GetDB() (*sql.DB, error) {

@@ -1,3 +1,4 @@
+/*
 resource "aws_ecr_repository" "wendover" {
   name = "wendover"
   image_tag_mutability = "MUTABLE"
@@ -129,3 +130,4 @@ resource "aws_ecs_service" "wendover_api" {
     ]
   }
 }
+*/

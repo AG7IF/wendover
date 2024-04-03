@@ -9,6 +9,23 @@ resource "aws_vpc" "wendover" {
   }
 }
 
+resource "aws_internet_gateway" "wendover" {
+  vpc_id = aws_vpc.wendover.id
+
+  tags = {
+    Name = "main"
+  }
+}
+
+resource "aws_route_table" "wendover" {
+  vpc_id = aws_vpc.wendover.id
+
+  route {
+    cidr_block = "10.0.0.0/16"
+    gateway_id = "local"
+  }
+}
+
 resource "aws_subnet" "wendover_a" {
   vpc_id              = aws_vpc.wendover.id
   cidr_block          = "10.0.1.0/24"
@@ -31,35 +48,11 @@ resource "aws_subnet" "wendover_b" {
   }
 }
 
-resource "aws_subnet" "wendover_c" {
-  vpc_id              = aws_vpc.wendover.id
-  cidr_block          = "10.0.3.0/24"
-  availability_zone   = "${var.region}c"
-
-  tags = {
-    Name    = "Wendover-C"
-    Service = "wendover"
-  }
-}
-
-resource "aws_subnet" "wendover_d" {
-  vpc_id              = aws_vpc.wendover.id
-  cidr_block          = "10.0.4.0/24"
-  availability_zone   = "${var.region}d"
-
-  tags = {
-    Name    = "Wendover-D"
-    Service = "wendover"
-  }
-}
-
 resource "aws_db_subnet_group" "wendover" {
   name        = "wendover-db"
   subnet_ids  = [
     aws_subnet.wendover_a.id,
-    aws_subnet.wendover_b.id,
-    aws_subnet.wendover_c.id,
-    aws_subnet.wendover_d.id
+    aws_subnet.wendover_b.id
   ]
 }
 
