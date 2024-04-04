@@ -163,6 +163,7 @@ resource "aws_acm_certificate_validation" "wendover_vpn_validation" {
   validation_record_fqdns =   [ for record in aws_route53_record.wendover_validation : record.fqdn ]
 }
 
+/*
 resource "aws_ec2_client_vpn_endpoint" "wendover" {
   description             = "wendover-a"
   server_certificate_arn  = aws_acm_certificate.wendover_vpn.arn
@@ -175,3 +176,4 @@ resource "aws_ec2_client_vpn_endpoint" "wendover" {
   }
 
 }
+*/
