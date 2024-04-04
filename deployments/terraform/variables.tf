@@ -9,6 +9,12 @@ variable "region" {
   default     = "us-west-2"
 }
 
+# EC2 Configuration
+variable "ami_id" {
+  description = "The AMI ID to use for EC2 instances"
+  default     = "ami-0395649fbe870727e"
+}
+
 # Parameters
 variable "api_root_path" {
   description = "Root path for the API endpoint"
