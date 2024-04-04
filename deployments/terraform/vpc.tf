@@ -135,3 +135,43 @@ resource "aws_security_group" "wendover_db" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_acm_certificate" "wendover_vpn" {
+  domain_name         =   var.web_full_domain
+  validation_method   =   "DNS"
+}
+
+resource "aws_route53_record" "wendover_vpn_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.wendover_vpn.domain_validation_options : dvo.domain_name => {
+      name    =   dvo.resource_record_name
+      record  =   dvo.resource_record_value
+      type    =   dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite =   true
+  name            =   each.value.name
+  records         =   [each.value.record]
+  ttl             =   60
+  type            =   each.value.type
+  zone_id         =   var.web_dns_zone_id
+}
+
+resource "aws_acm_certificate_validation" "wendover_vpn_validation" {
+  certificate_arn         =   aws_acm_certificate.wendover.arn
+  validation_record_fqdns =   [ for record in aws_route53_record.wendover_validation : record.fqdn ]
+}
+
+resource "aws_ec2_client_vpn_endpoint" "wendover" {
+  description             = "wendover-a"
+  server_certificate_arn  = aws_acm_certificate.wendover_vpn.arn
+  client_cidr_block       = "10.0.0.0/16"
+
+  connection_log_options {
+    enabled = true
+    cloudwatch_log_group  = aws_cloudwatch_log_group.wendover.name
+    cloudwatch_log_stream = aws_cloudwatch_log_stream.wendover_vpn.name
+  }
+
+}
