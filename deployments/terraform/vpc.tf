@@ -1,5 +1,5 @@
 resource "aws_vpc" "wendover" {
-  cidr_block            = "10.0.0.0/8"
+  cidr_block            = "10.0.0.0/16"
   enable_dns_support    = true
   enable_dns_hostnames  = true
 
@@ -21,14 +21,21 @@ resource "aws_route_table" "wendover" {
   vpc_id = aws_vpc.wendover.id
 
   route {
-    cidr_block = "10.0.0.0/8"
+    cidr_block = "10.0.0.0/16"
     gateway_id = "local"
   }
 }
+/*
+Subnet A:
+0000 0010 | 0000 0000 | 0000 0000 | 0000 0000
+1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
+
+Subnet B:
+*/
 
 resource "aws_subnet" "wendover_a" {
   vpc_id              = aws_vpc.wendover.id
-  cidr_block          = "10.1.0.0/16"
+  cidr_block          = "10.0.4.0/22"
   availability_zone   = "${var.region}a"
 
   tags = {
@@ -39,7 +46,7 @@ resource "aws_subnet" "wendover_a" {
 
 resource "aws_subnet" "wendover_b" {
   vpc_id              = aws_vpc.wendover.id
-  cidr_block          = "10.2.0.0/16"
+  cidr_block          = "10.0.8.0/22"
   availability_zone   = "${var.region}b"
 
   tags = {
@@ -169,7 +176,7 @@ resource "aws_acm_certificate_validation" "wendover_vpn_validation" {
 resource "aws_ec2_client_vpn_endpoint" "wendover" {
   description             = "wendover-a"
   server_certificate_arn  = aws_acm_certificate.wendover_vpn.arn
-  client_cidr_block       = "10.9.0.0/16"
+  client_cidr_block       = "10.0.252.0/22"
   vpn_port = "1194"
 
   connection_log_options {
