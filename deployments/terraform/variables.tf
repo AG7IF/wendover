@@ -15,6 +15,11 @@ variable "ami_id" {
   default     = "ami-0395649fbe870727e"
 }
 
+variable "public_key" {
+  description = "Public key for EC2 instance SSH"
+  default     = ""
+}
+
 # Parameters
 variable "api_root_path" {
   description = "Root path for the API endpoint"
