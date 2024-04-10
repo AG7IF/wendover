@@ -172,7 +172,6 @@ resource "aws_acm_certificate_validation" "wendover_vpn_validation" {
 }
 */
 
-/*
 resource "aws_ec2_client_vpn_endpoint" "wendover" {
   description             = "wendover-a"
   server_certificate_arn  = aws_acm_certificate.wendover_vpn.arn
@@ -186,4 +185,3 @@ resource "aws_ec2_client_vpn_endpoint" "wendover" {
   }
 
 }
-*/
