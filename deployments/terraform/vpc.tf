@@ -172,7 +172,7 @@ resource "aws_acm_certificate_validation" "wendover_vpn_validation" {
 }
 */
 
-resource "aws_ec2_client_vpn_endpoint" "wendover" {
+resource "aws_ec2_client_vpn_endpoint" "wendover-a" {
   description             = "wendover-a"
   server_certificate_arn  = aws_acm_certificate.wendover_vpn.arn
   client_cidr_block       = "10.0.252.0/22"
@@ -187,5 +187,9 @@ resource "aws_ec2_client_vpn_endpoint" "wendover" {
     enabled               = true
     cloudwatch_log_group  = aws_cloudwatch_log_group.wendover.name
     cloudwatch_log_stream = aws_cloudwatch_log_stream.wendover_vpn.name
+  }
+
+  tags = {
+    Name = "wendover-a"
   }
 }
