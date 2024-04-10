@@ -41,7 +41,6 @@ workflows:
             branches:
               only:
                 - main
-                - derhabicht/1/deployment
       - build-wendsrv:
           requires:
             - test-wendover
@@ -50,23 +49,19 @@ workflows:
             branches:
               only:
                 - main
-                - derhabicht/1/deployment
       - deploy-hold-wendsrv:
           type: approval
           filters:
             branches:
               only:
                 - main
-                - derhabicht/1/deployment
       - migrate-wendsrv-prod:
           requires:
             - build-wendsrv
-            - deploy-hold-wendsrv
           filters:
             branches:
               only:
                 - main
-                - derhabicht/1/deployment
       - deploy-wendsrv-prod:
           requires:
             - migrate-wendsrv-prod

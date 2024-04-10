@@ -4,7 +4,6 @@ resource "aws_key_pair" "wendover" {
 }
 
 resource "aws_network_interface" "wendover_a" {
-  ami       = var.ami_id
   subnet_id = aws_subnet.wendover_a.id
 
   tags = {
