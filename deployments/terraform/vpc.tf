@@ -178,10 +178,14 @@ resource "aws_ec2_client_vpn_endpoint" "wendover" {
   client_cidr_block       = "10.0.252.0/22"
   vpn_port = "1194"
 
+  authentication_options {
+    type                        = "certificate-authentication"
+    root_certificate_chain_arn  = aws_acm_certificate.wendover_vpn.arn
+  }
+
   connection_log_options {
-    enabled = true
+    enabled               = true
     cloudwatch_log_group  = aws_cloudwatch_log_group.wendover.name
     cloudwatch_log_stream = aws_cloudwatch_log_stream.wendover_vpn.name
   }
-
 }
