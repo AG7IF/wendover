@@ -7,10 +7,12 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
+
+	"github.com/ag7if/wendover/internal/aws"
 )
 
 const (
-	appName   = "wendover"
+	AppName   = "wendover"
 	envPrefix = "WENDOVER"
 )
 
@@ -42,7 +44,7 @@ func initDefaults() {
 
 	// Defaults
 	viper.SetDefault(Version, "")
-	viper.SetDefault(Directory, filepath.Join(usrCfgDir, appName))
+	viper.SetDefault(Directory, filepath.Join(usrCfgDir, AppName))
 	viper.SetDefault(AWSRegion, "")
 	viper.SetDefault(AWSCognitoIss, "")
 	viper.SetDefault(AWSCognitoUserpoolID, "")
@@ -87,9 +89,12 @@ func init() {
 	initDefaults()
 	initEnv()
 
-	// To skip initiation of the config file, set the WENDOVER_CONFIG_DIRECTORY environment variable to DOZFAC
-	// (DOZen FACtors, i.e. set this up as a 12-factor application).
-	if viper.GetString(Directory) != "DOZFAC" {
+	switch viper.GetString(Directory) {
+	case "DOZFAC":
+		break
+	case "AWS":
+		aws.InitConfigFromParameterStore()
+	default:
 		initCfgFile()
 	}
 }

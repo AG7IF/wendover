@@ -63,8 +63,8 @@ resource "aws_db_subnet_group" "wendover" {
   ]
 }
 
-resource "aws_security_group" "wendover_api" {
-  name    = "wendover-api"
+resource "aws_security_group" "wendover_vpn" {
+  name    = "wendover-vpn"
   vpc_id  = aws_vpc.wendover.id
 
   ingress {
@@ -73,6 +73,18 @@ resource "aws_security_group" "wendover_api" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  egress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "wendover_api" {
+  name    = "wendover-api"
+  vpc_id  = aws_vpc.wendover.id
 
   ingress {
     from_port   = 80
@@ -93,13 +105,6 @@ resource "aws_security_group" "wendover_api" {
     to_port     = 8080
     protocol    = "tcp"
     cidr_blocks =   ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -176,7 +181,9 @@ resource "aws_ec2_client_vpn_endpoint" "wendover_a" {
   description             = "wendover-a"
   server_certificate_arn  = aws_acm_certificate.wendover_vpn.arn
   client_cidr_block       = "10.0.252.0/22"
-  vpn_port = "1194"
+  vpn_port                = "1194"
+  vpc_id                  = aws_vpc.wendover.id
+  security_group_ids      = [aws_security_group.wendover_vpn.id]
 
   authentication_options {
     type                        = "certificate-authentication"
