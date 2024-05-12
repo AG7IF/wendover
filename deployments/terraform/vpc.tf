@@ -44,6 +44,19 @@ resource "aws_subnet" "wendover_a" {
   }
 }
 
+resource "aws_eip" "wendover_a" {
+  domain      = "vpc"
+
+  depends_on  = [aws_internet_gateway.wendover]
+}
+
+resource "aws_nat_gateway" "wendover_a" {
+  subnet_id     = aws_subnet.wendover_a.id
+  allocation_id = aws_eip.wendover_a.id
+
+  depends_on    = [aws_internet_gateway.wendover]
+}
+
 resource "aws_subnet" "wendover_b" {
   vpc_id              = aws_vpc.wendover.id
   cidr_block          = "10.0.8.0/22"
@@ -53,6 +66,19 @@ resource "aws_subnet" "wendover_b" {
     Name    = "Wendover-B"
     Service = "wendover"
   }
+}
+
+resource "aws_eip" "wendover_b" {
+  domain      = "vpc"
+
+  depends_on  = [aws_internet_gateway.wendover]
+}
+
+resource "aws_nat_gateway" "wendover_b" {
+  subnet_id     = aws_subnet.wendover_b.id
+  allocation_id = aws_eip.wendover_b.id
+
+  depends_on    = [aws_internet_gateway.wendover]
 }
 
 resource "aws_db_subnet_group" "wendover" {
