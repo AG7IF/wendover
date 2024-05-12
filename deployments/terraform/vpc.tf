@@ -63,25 +63,6 @@ resource "aws_db_subnet_group" "wendover" {
   ]
 }
 
-resource "aws_security_group" "wendover_vpn" {
-  name    = "wendover-vpn"
-  vpc_id  = aws_vpc.wendover.id
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
 resource "aws_security_group" "wendover_api" {
   name    = "wendover-api"
   vpc_id  = aws_vpc.wendover.id
@@ -145,58 +126,5 @@ resource "aws_security_group" "wendover_db" {
     to_port     = 5432
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_acm_certificate" "wendover_vpn" {
-  domain_name         =   var.web_full_domain
-  validation_method   =   "DNS"
-}
-
-resource "aws_route53_record" "wendover_vpn_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.wendover_vpn.domain_validation_options : dvo.domain_name => {
-      name    =   dvo.resource_record_name
-      record  =   dvo.resource_record_value
-      type    =   dvo.resource_record_type
-    }
-  }
-
-  allow_overwrite =   true
-  name            =   each.value.name
-  records         =   [each.value.record]
-  ttl             =   60
-  type            =   each.value.type
-  zone_id         =   var.web_dns_zone_id
-}
-
-/*
-resource "aws_acm_certificate_validation" "wendover_vpn_validation" {
-  certificate_arn         =   aws_acm_certificate.wendover.arn
-  validation_record_fqdns =   [ for record in aws_route53_record.wendover_validation : record.fqdn ]
-}
-*/
-
-resource "aws_ec2_client_vpn_endpoint" "wendover_a" {
-  description             = "wendover-a"
-  server_certificate_arn  = aws_acm_certificate.wendover_vpn.arn
-  client_cidr_block       = "10.0.252.0/22"
-  vpn_port                = "1194"
-  vpc_id                  = aws_vpc.wendover.id
-  security_group_ids      = [aws_security_group.wendover_vpn.id]
-
-  authentication_options {
-    type                        = "certificate-authentication"
-    root_certificate_chain_arn  = aws_acm_certificate.wendover_vpn.arn
-  }
-
-  connection_log_options {
-    enabled               = true
-    cloudwatch_log_group  = aws_cloudwatch_log_group.wendover.name
-    cloudwatch_log_stream = aws_cloudwatch_log_stream.wendover_vpn.name
-  }
-
-  tags = {
-    Name = "wendover-a"
   }
 }
