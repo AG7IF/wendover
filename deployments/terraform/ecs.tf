@@ -11,7 +11,6 @@ resource "aws_ecr_repository" "wendover" {
   }
 }
 
-/*
 resource "aws_ecs_task_definition" "wendover_api"{
   family                    = "wendover-api"
   requires_compatibilities  = ["FARGATE"]
@@ -128,4 +127,3 @@ resource "aws_ecs_service" "wendover_api" {
     ]
   }
 }
-*/
