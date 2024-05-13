@@ -1,7 +1,7 @@
 # Route53 configuration
 resource "aws_route53_record" "wendover" {
   zone_id   =   var.web_dns_zone_id
-  name      =   var.web_full_domain
+  name      =   var.web_domain
   type      =   "CNAME"
   ttl       =   500
   records   =   [aws_cloudfront_distribution.wendover_web.domain_name]
@@ -9,7 +9,7 @@ resource "aws_route53_record" "wendover" {
 
 resource "aws_acm_certificate" "wendover" {
   provider            =   aws.virgina
-  domain_name         =   var.web_full_domain
+  domain_name         =   var.web_domain
   validation_method   =   "DNS"
 }
 
@@ -55,7 +55,7 @@ resource "aws_s3_bucket_acl" "wendover_logs" {
 }
 
 resource "aws_s3_bucket" "wendover_web" {
-  bucket = var.web_full_domain
+  bucket = var.web_domain
 }
 
 resource "aws_s3_bucket_ownership_controls" "wendover_web" {
@@ -97,7 +97,7 @@ resource "aws_cloudfront_distribution" "wendover_web" {
     prefix            =   "wendover"
   }
 
-  aliases = [var.web_full_domain]
+  aliases = [var.web_domain]
 
   default_cache_behavior {
     allowed_methods   =   ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
