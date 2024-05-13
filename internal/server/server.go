@@ -40,21 +40,23 @@ func NewServer(version string) (*Server, error) {
 		return nil, errors.WithStack(err)
 	}
 
-	iss := viper.GetString(config.AWSCognitoIss)
-	userPoolID := viper.GetString(config.AWSCognitoUserpoolID)
-	region := viper.GetString(config.AWSRegion)
+	/*
+		iss := viper.GetString(config.AWSCognitoIss)
+		userPoolID := viper.GetString(config.AWSCognitoUserpoolID)
+		region := viper.GetString(config.AWSRegion)
 
-	auth, err := cognito.AuthJWTMiddleware(iss, userPoolID, region)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
+		auth, err := cognito.AuthJWTMiddleware(iss, userPoolID, region)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+	*/
 
 	engine := gin.Default()
 
 	server := &Server{
 		repo:   repo,
 		engine: engine,
-		auth:   auth,
+		//auth:   auth,
 	}
 	server.setupRoutes(version)
 

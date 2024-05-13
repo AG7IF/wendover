@@ -30,7 +30,7 @@ install_server: bin/wendsrv
 	mv bin/wendsrv ${GOPATH}/bin/
 
 .PHONY: build_wendsrv_docker
-server:
+build_wendsrv_docker:
 	docker build -t wendsrv:latest -f deployments/docker/wendsrv/Dockerfile .
 
 .PHONY: test

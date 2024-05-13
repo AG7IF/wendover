@@ -7,8 +7,6 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
-
-	"github.com/ag7if/wendover/internal/aws"
 )
 
 const (
@@ -18,11 +16,6 @@ const (
 
 const (
 	Version                 = "version"
-	AWSRegion               = "aws.region"
-	AWSCognitoIss           = "aws.cognito.iss"
-	AWSCognitoUserpoolID    = "aws.cognito.userpool_id"
-	AWSLogGroupName         = "aws.log_group_name"
-	AWSLogStreamName        = "aws.log_stream_name"
 	Directory               = "config.directory"
 	DatabaseHost            = "database.host"
 	DatabasePort            = "database.port"
@@ -45,11 +38,6 @@ func initDefaults() {
 	// Defaults
 	viper.SetDefault(Version, "")
 	viper.SetDefault(Directory, filepath.Join(usrCfgDir, AppName))
-	viper.SetDefault(AWSRegion, "")
-	viper.SetDefault(AWSCognitoIss, "")
-	viper.SetDefault(AWSCognitoUserpoolID, "")
-	viper.SetDefault(AWSLogGroupName, "/aws/lambda/wendover-migrate-db")
-	viper.SetDefault(AWSLogStreamName, "wendover-migrate-db")
 	viper.SetDefault(DatabaseHost, "localhost")
 	viper.SetDefault(DatabasePort, "5432")
 	viper.SetDefault(DatabaseName, "wendover_dev")
@@ -92,8 +80,6 @@ func init() {
 	switch viper.GetString(Directory) {
 	case "DOZFAC":
 		break
-	case "AWS":
-		aws.InitConfigFromParameterStore()
 	default:
 		initCfgFile()
 	}

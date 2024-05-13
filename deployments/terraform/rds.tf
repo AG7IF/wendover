@@ -8,7 +8,7 @@ resource "aws_kms_key" "wendover" {
               "Sid"       = "Enable IAM User Permissions",
               "Effect"    = "Allow",
               "Principal" = {
-                  "AWS"   = var.aws_principal_arn
+                  "AWS"   = var.aws_kms_principal_arn
               },
               "Action"    = "kms:*",
               "Resource"  = "*"

@@ -30,10 +30,12 @@ resource "aws_cognito_user_pool" "wendover" {
 
   email_configuration {
     email_sending_account   =   "DEVELOPER"
-    source_arn              =   var.cognito_from_email_arn
-    from_email_address      =   var.cognito_from_email
+    source_arn              =   aws_ses_email_identity.wendover.arn
+    from_email_address      =   aws_ses_email_identity.wendover.email
     reply_to_email_address  =   var.cognito_reply_to_email
   }
+
+  depends_on = [aws_ses_email_identity.wendover]
 }
 
 resource "aws_cognito_user_pool_client" "wendover_web" {

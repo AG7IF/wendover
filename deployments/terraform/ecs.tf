@@ -40,12 +40,7 @@ resource "aws_ecs_task_definition" "wendover_api"{
         }
       ]
 
-      environment = [
-        {
-          name  = "WENDOVER_AWS_REGION"
-          value = var.region
-        }
-      ]
+      healthcheck = ["CMD-SHELL", "curl -f http://localhost/${var.api_root_path}/healthcheck || exit 1"]
 
       secrets = [
         {
