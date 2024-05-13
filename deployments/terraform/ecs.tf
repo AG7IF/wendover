@@ -40,7 +40,10 @@ resource "aws_ecs_task_definition" "wendover_api"{
         }
       ]
 
-      healthcheck = ["CMD-SHELL", "curl -f http://localhost/${var.api_root_path}/healthcheck || exit 1"]
+      healthcheck = {
+        command     = ["CMD-SHELL", "curl -f http://localhost/${var.api_root_path}/healthcheck || exit 1"]
+        startPeriod = 300
+      }
 
       secrets = [
         {
