@@ -64,11 +64,9 @@ resource "aws_s3_bucket_ownership_controls" "wendover_web" {
   }
 }
 
-resource "aws_s3_bucket_acl" "wendover_web" {
-  depends_on = [aws_cloudfront_origin_access_control.wendover_web]
-
-  bucket = aws_s3_bucket.wendover_web.id
-  acl    = "private"
+resource "aws_s3_bucket_policy" "wendover_web" {
+  bucket = aws_s3_bucket.wendover_web.bucket
+  policy = data.aws_iam_policy_document.cloudfront_bucket_policy.json
 }
 
 # CloudFront configuration

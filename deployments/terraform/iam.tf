@@ -1,3 +1,31 @@
+// Allow CloudFront read-only access to an S3 bucket
+data "aws_iam_policy_document" "cloudfront_bucket_policy" {
+  statement {
+    sid = "AllowCloudFrontServicePrincipalReadOnly"
+
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+
+    actions = [
+      "s3:GetObject"
+    ]
+
+    resources = [
+      "${aws_s3_bucket.wendover_web.arn}/*"
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = [aws_cloudfront_distribution.wendover_web.arn]
+    }
+  }
+}
+
 // ECS Execution Role
 data "aws_iam_policy_document" "wendover_ecs_execution_role_trust" {
   statement {
