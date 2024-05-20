@@ -57,9 +57,18 @@ resource "aws_s3_bucket" "wendover_web" {
   bucket = var.web_domain
 }
 
-resource "aws_s3_bucket_policy" "wendover_web" {
+resource "aws_s3_bucket_ownership_controls" "wendover_web" {
+  bucket = aws_s3_bucket.wendover_web.bucket
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "wendover_web" {
+  depends_on = [aws_cloudfront_origin_access_control.wendover_web]
+
   bucket = aws_s3_bucket.wendover_web.id
-  policy = data.aws_iam_policy_document.cloudfront_bucket_policy.json
+  acl    = "private"
 }
 
 # CloudFront configuration
