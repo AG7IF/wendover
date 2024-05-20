@@ -17,7 +17,7 @@ resource "aws_acm_certificate" "wendover" {
   validation_method   =   "DNS"
 }
 
-resource "aws_route53_record" "wendover_validation" {
+resource "aws_route53_record" "wendover_cf_validation" {
   for_each = {
     for dvo in aws_acm_certificate.wendover.domain_validation_options : dvo.domain_name => {
       name    =   dvo.resource_record_name
