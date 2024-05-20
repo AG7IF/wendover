@@ -17,10 +17,6 @@ resource "aws_ses_domain_identity_verification" "wendover" {
 }
 
 // DKIM
-resource "aws_ses_domain_identity" "wendover" {
-  domain = "wendover.com"
-}
-
 resource "aws_ses_domain_dkim" "wendover" {
   domain = aws_ses_domain_identity.wendover.domain
 }
