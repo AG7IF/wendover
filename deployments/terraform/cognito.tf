@@ -1,4 +1,3 @@
-/*
 resource "aws_cognito_user_pool" "wendover" {
   name = "wendover"
 
@@ -55,4 +54,3 @@ resource "aws_cognito_user_pool_client" "wendover_web" {
   read_attributes   =   ["email"]
   write_attributes  =   ["email"]
 }
-*/

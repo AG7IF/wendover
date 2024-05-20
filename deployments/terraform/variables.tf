@@ -21,11 +21,6 @@ variable "web_domain" {
 }
 
 # Email configuration
-variable "cognito_from_email" {
-  description = "The email address used for Cognito SES configuration"
-  default = ""
-}
-
 variable "cognito_reply_to_email" {
   description = "The reply-to email address used for Cognito SES configuration"
   default = ""

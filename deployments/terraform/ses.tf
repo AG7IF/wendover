@@ -32,7 +32,7 @@ resource "aws_route53_record" "wendover_dkim" {
 
 // Email Identity
 resource "aws_ses_email_identity" "wendover" {
-  email       = var.cognito_from_email
+  email       = "admin@${var.web_domain}"
 
   depends_on  = [aws_ses_domain_identity.wendover]
 }

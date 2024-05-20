@@ -1,4 +1,3 @@
-/*
 resource "aws_ssm_parameter" "wendover-aws-cognito-iss" {
   name  = "/wendover/aws/cognito/iss"
   type  = "String"
@@ -10,7 +9,6 @@ resource "aws_ssm_parameter" "wendover-aws-cognito-userpool_id" {
   type  = "String"
   value = aws_cognito_user_pool.wendover.id
 }
-*/
 
 resource "aws_ssm_parameter" "wendover-aws-log_group_name" {
   name  = "/wendover/aws/log_group_name"
