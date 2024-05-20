@@ -30,11 +30,6 @@ resource "aws_route53_record" "wendover_validation" {
   zone_id         =   var.web_dns_zone_id
 }
 
-#resource "aws_acm_certificate_validation" "wendover_validation" {
-#  certificate_arn         =   aws_acm_certificate.wendover.arn
-#  validation_record_fqdns =   [ for record in aws_route53_record.wendover_validation : record.fqdn ]
-#}
-
 # S3 configuration
 resource "aws_s3_bucket" "wendover_logs" {
   bucket = "wendover-logs"

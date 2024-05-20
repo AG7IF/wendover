@@ -4,8 +4,7 @@ resource "aws_vpc" "wendover" {
   enable_dns_hostnames  = true
 
   tags = {
-    Name    = "Wendover"
-    Service = "wendover"
+    Name = "Wendover"
   }
 }
 
@@ -13,7 +12,7 @@ resource "aws_internet_gateway" "wendover" {
   vpc_id = aws_vpc.wendover.id
 
   tags = {
-    Name = "main"
+    Name = "Wendover"
   }
 }
 
@@ -39,13 +38,16 @@ resource "aws_subnet" "wendover_a" {
   availability_zone   = "${var.region}a"
 
   tags = {
-    Name    = "Wendover-A"
-    Service = "wendover"
+    Name = "Wendover-A"
   }
 }
 
 resource "aws_eip" "wendover_a" {
   domain      = "vpc"
+
+  tags = {
+    Name = "Wendover-A"
+  }
 
   depends_on  = [aws_internet_gateway.wendover]
 }
@@ -53,6 +55,10 @@ resource "aws_eip" "wendover_a" {
 resource "aws_nat_gateway" "wendover_a" {
   subnet_id     = aws_subnet.wendover_a.id
   allocation_id = aws_eip.wendover_a.id
+
+  tags = {
+    Name = "Wendover-A"
+  }
 
   depends_on    = [aws_internet_gateway.wendover]
 }
@@ -64,12 +70,15 @@ resource "aws_subnet" "wendover_b" {
 
   tags = {
     Name    = "Wendover-B"
-    Service = "wendover"
   }
 }
 
 resource "aws_eip" "wendover_b" {
   domain      = "vpc"
+
+  tags = {
+    Name    = "Wendover-B"
+  }
 
   depends_on  = [aws_internet_gateway.wendover]
 }
@@ -77,6 +86,10 @@ resource "aws_eip" "wendover_b" {
 resource "aws_nat_gateway" "wendover_b" {
   subnet_id     = aws_subnet.wendover_b.id
   allocation_id = aws_eip.wendover_b.id
+
+  tags = {
+    Name    = "Wendover-B"
+  }
 
   depends_on    = [aws_internet_gateway.wendover]
 }

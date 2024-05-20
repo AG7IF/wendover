@@ -125,4 +125,6 @@ resource "aws_ecs_service" "wendover_api" {
       aws_security_group.wendover_db.id
     ]
   }
+
+  depends_on = []
 }

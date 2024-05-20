@@ -11,8 +11,3 @@ resource "aws_cloudwatch_log_stream" "wendover_api" {
   name            = "wendover-api"
   log_group_name  = aws_cloudwatch_log_group.wendover.name
 }
-
-resource "aws_cloudwatch_log_stream" "wendover_vpn" {
-  name            = "wendover-vpn"
-  log_group_name  = aws_cloudwatch_log_group.wendover.name
-}
