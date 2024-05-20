@@ -2,9 +2,13 @@
 resource "aws_route53_record" "wendover" {
   zone_id   =   var.web_dns_zone_id
   name      =   var.web_domain
-  type      =   "CNAME"
-  ttl       =   500
-  records   =   [aws_cloudfront_distribution.wendover_web.domain_name]
+  type      =   "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.wendover_web.domain_name
+    zone_id                = aws_cloudfront_distribution.wendover_web.hosted_zone_id
+    evaluate_target_health = false
+  }
 }
 
 resource "aws_acm_certificate" "wendover" {
@@ -69,10 +73,10 @@ resource "aws_s3_bucket_acl" "wendover_web" {
 
 # CloudFront configuration
 resource "aws_cloudfront_origin_access_control" "wendover_web" {
-  name                                =   "wendover-web"
-  origin_access_control_origin_type   =   "s3"
-  signing_behavior                    =   "always"
-  signing_protocol                    =   "sigv4"
+  name                                = "wendover-web"
+  origin_access_control_origin_type   = "s3"
+  signing_behavior                    = "always"
+  signing_protocol                    = "sigv4"
 }
 
 resource "aws_cloudfront_distribution" "wendover_web" {
@@ -82,22 +86,22 @@ resource "aws_cloudfront_distribution" "wendover_web" {
     origin_id                = "wendover-web"
   }
 
-  enabled               =   true
-  is_ipv6_enabled       =   true
-  default_root_object   =   "index.html"
+  enabled               = true
+  is_ipv6_enabled       = true
+  default_root_object   = "index.html"
 
   logging_config {
-    include_cookies   =   false
-    bucket            =   aws_s3_bucket.wendover_logs.bucket_regional_domain_name
-    prefix            =   "wendover"
+    include_cookies   = false
+    bucket            = aws_s3_bucket.wendover_logs.bucket_regional_domain_name
+    prefix            = "wendover"
   }
 
   aliases = [var.web_domain]
 
   default_cache_behavior {
-    allowed_methods   =   ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods    =   ["GET", "HEAD"]
-    target_origin_id  =   "wendover-web"
+    allowed_methods   = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods    = ["GET", "HEAD"]
+    target_origin_id  = "wendover-web"
 
     forwarded_values {
       query_string = false
@@ -107,10 +111,10 @@ resource "aws_cloudfront_distribution" "wendover_web" {
       }
     }
 
-    viewer_protocol_policy  =   "allow-all"
-    min_ttl                 =       0
-    default_ttl             =    3600
-    max_ttl                 =   86400
+    viewer_protocol_policy  = "allow-all"
+    min_ttl                 =     0
+    default_ttl             =  3600
+    max_ttl                 = 86400
   }
 
   # Cache behavior with precedence 0
@@ -158,7 +162,7 @@ resource "aws_cloudfront_distribution" "wendover_web" {
     viewer_protocol_policy = "redirect-to-https"
   }
 
-  price_class = "PriceClass_200"
+  price_class = "PriceClass_100"
 
   restrictions {
     geo_restriction {
