@@ -25,8 +25,8 @@ resource "aws_route_table" "wendover_public" {
   vpc_id = aws_vpc.wendover.id
 
   route {
-    cidr_block          = "0.0.0.0/0"
-    internet_gateway_id = aws_internet_gateway.wendover.id
+    cidr_block  = "0.0.0.0/0"
+    gateway_id  = aws_internet_gateway.wendover.id
   }
 
   tags = {
