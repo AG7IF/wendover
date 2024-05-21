@@ -165,9 +165,9 @@ resource "aws_route_table" "wendover_private_b" {
   }
 }
 
-resource "aws_route_table_association" "wendover_private_c" {
-  route_table_id  = aws_route_table.wendover_private_c.id
-  subnet_id       = aws_subnet.wendover_private_c.id
+resource "aws_route_table_association" "wendover_private_b" {
+  route_table_id  = aws_route_table.wendover_private_b.id
+  subnet_id       = aws_subnet.wendover_private_b.id
 }
 
 resource "aws_db_subnet_group" "wendover" {
