@@ -28,8 +28,7 @@ resource "aws_ecs_service" "wendover_api" {
       aws_subnet.wendover_private_b.id
     ]
     security_groups = [
-      aws_security_group.wendover_api.id,
-      aws_security_group.wendover_db.id
+      aws_security_group.wendover_api.id
     ]
   }
 
