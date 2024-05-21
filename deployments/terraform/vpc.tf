@@ -16,149 +16,171 @@ resource "aws_internet_gateway" "wendover" {
   }
 }
 
-resource "aws_route_table" "wendover" {
+resource "aws_internet_gateway_attachment" "wendover" {
+  vpc_id              = aws_vpc.wendover.id
+  internet_gateway_id = aws_internet_gateway.wendover.id
+}
+
+resource "aws_route_table" "wendover_public" {
   vpc_id = aws_vpc.wendover.id
 
   route {
-    cidr_block = "10.0.0.0/16"
-    gateway_id = "local"
+    cidr_block          = "0.0.0.0/0"
+    internet_gateway_id = aws_internet_gateway.wendover.id
   }
 
   tags = {
-    Name = "Wendover"
+    Name = "WendoverPublic"
   }
 }
 
 /*
-Subnet A:
+Subnet PublicA: 10.0.0.0/22
 0000 1010 | 0000 0000 | 0000 0000 | 0000 0000
 1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
 
-Subnet B:
+Subnet PrivateA: 10.0.4.0/22
 0000 1010 | 0000 0000 | 0000 0100 | 0000 0000
 1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
 
-Subnet C:
+Subnet PublicB: 10.0.8.0/22
 0000 1010 | 0000 0000 | 0000 1000 | 0000 0000
 1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
 
-Subnet D:
+Subnet PrivateB: 10.0.12.0/22
 0000 1010 | 0000 0000 | 0000 1100 | 0000 0000
 1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
-
-Subnet E:
-0000 1010 | 0000 0000 | 0001 0000 | 0000 0000
-1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
 */
-resource "aws_subnet" "wendover_a" {
-  vpc_id              = aws_vpc.wendover.id
-  cidr_block          = "10.0.0.0/22"
-  availability_zone   = "${var.region}a"
+resource "aws_subnet" "wendover_public_a" {
+  vpc_id                  = aws_vpc.wendover.id
+  cidr_block              = "10.0.0.0/22"
+  availability_zone       = "${var.region}a"
+  map_public_ip_on_launch = true
 
   tags = {
-    Name = "Wendover-A"
+    Name = "WendoverPublic-A"
   }
 }
 
-resource "aws_route_table_association" "wendover_a" {
-  subnet_id       = aws_subnet.wendover_a.id
-  route_table_id  = aws_route_table.wendover.id
+resource "aws_route_table_association" "wendover_public_a" {
+  route_table_id  = aws_route_table.wendover_public.id
+  subnet_id       = aws_subnet.wendover_public_a.id
 }
 
-resource "aws_subnet" "wendover_b" {
-  vpc_id              = aws_vpc.wendover.id
-  cidr_block          = "10.0.4.0/22"
-  availability_zone   = "${var.region}b"
+resource "aws_subnet" "wendover_private_a" {
+  vpc_id                  = aws_vpc.wendover.id
+  cidr_block              = "10.0.4.0/22"
+  availability_zone       = "${var.region}a"
+  map_public_ip_on_launch = false
 
   tags = {
-    Name    = "Wendover-B"
+    Name = "WendoverPrivate-A"
   }
 }
 
-resource "aws_route_table_association" "wendover_b" {
-  subnet_id       = aws_subnet.wendover_b.id
-  route_table_id  = aws_route_table.wendover.id
-}
-
-resource "aws_subnet" "wendover_c" {
-  vpc_id              = aws_vpc.wendover.id
-  cidr_block          = "10.0.8.0/22"
-  availability_zone   = "${var.region}c"
-
+resource "aws_eip" "wendover_private_a" {
   tags = {
-    Name    = "Wendover-C"
+    Name = "WendoverPrivate-A"
   }
 }
 
-resource "aws_route_table_association" "wendover_c" {
-  subnet_id       = aws_subnet.wendover_c.id
-  route_table_id  = aws_route_table.wendover.id
-}
-
-resource "aws_subnet" "wendover_d" {
-  vpc_id              = aws_vpc.wendover.id
-  cidr_block          = "10.0.12.0/22"
-  availability_zone   = "${var.region}d"
+resource "aws_nat_gateway" "wendover_private_a" {
+  allocation_id = aws_eip.wendover_private_a.id
+  subnet_id     = aws_subnet.wendover_private_a.id
 
   tags = {
-    Name    = "Wendover-D"
-  }
-}
-
-resource "aws_route_table_association" "wendover_d" {
-  subnet_id       = aws_subnet.wendover_d.id
-  route_table_id  = aws_route_table.wendover.id
-}
-
-resource "aws_subnet" "wendover_e" {
-  vpc_id              = aws_vpc.wendover.id
-  cidr_block          = "10.0.16.0/22"
-
-  tags = {
-    Name    = "Wendover-E"
-  }
-}
-
-resource "aws_eip" "wendover_e" {
-  domain      = "vpc"
-
-  depends_on  = [aws_internet_gateway.wendover]
-}
-
-resource "aws_nat_gateway" "wendover_e" {
-  subnet_id     = aws_subnet.wendover_e.id
-  allocation_id = aws_eip.wendover_e.id
-
-  tags = {
-    Name = "Wendover-E"
+    Name = "WendoverPrivate-A"
   }
 
-  depends_on  = [aws_internet_gateway.wendover]
+  depends_on = [aws_internet_gateway.wendover]
 }
 
-resource "aws_route_table" "wendover_e" {
+resource "aws_route_table" "wendover_private_a" {
   vpc_id = aws_vpc.wendover.id
 
   route {
-    cidr_block      = aws_subnet.wendover_e.cidr_block
-    nat_gateway_id  = aws_nat_gateway.wendover_e.id
+    cidr_block           = "0.0.0.0/0"
+    nat_gateway_id       = aws_nat_gateway.wendover_private_a.id
   }
 
   tags = {
-    Name = "Wendover-E"
+    Name = "WendoverPrivate-A"
   }
 }
 
-resource "aws_route_table_association" "wendover_e" {
-  subnet_id       = aws_subnet.wendover_e.id
-  route_table_id  = aws_route_table.wendover_e.id
+resource "aws_route_table_association" "wendover_private_a" {
+  route_table_id  = aws_route_table.wendover_private_a.id
+  subnet_id       = aws_subnet.wendover_private_a.id
+}
+
+resource "aws_subnet" "wendover_public_b" {
+  vpc_id                  = aws_vpc.wendover.id
+  cidr_block              = "10.0.8.0/22"
+  availability_zone       = "${var.region}b"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "WendoverPublic-B"
+  }
+}
+
+resource "aws_route_table_association" "wendover_public_b" {
+  route_table_id  = aws_route_table.wendover_public.id
+  subnet_id       = aws_subnet.wendover_public_b.id
+}
+
+resource "aws_subnet" "wendover_private_b" {
+  vpc_id                  = aws_vpc.wendover.id
+  cidr_block              = "10.0.12.0/22"
+  availability_zone       = "${var.region}b"
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "WendoverPrivate-B"
+  }
+}
+
+resource "aws_eip" "wendover_private_b" {
+  tags = {
+    Name = "WendoverPrivate-B"
+  }
+}
+
+resource "aws_nat_gateway" "wendover_private_b" {
+  allocation_id = aws_eip.wendover_private_b.id
+  subnet_id     = aws_subnet.wendover_private_b.id
+
+  tags = {
+    Name = "WendoverPrivate-B"
+  }
+
+  depends_on = [aws_internet_gateway.wendover]
+}
+
+resource "aws_route_table" "wendover_private_b" {
+  vpc_id = aws_vpc.wendover.id
+
+  route {
+    cidr_block           = "0.0.0.0/0"
+    nat_gateway_id       = aws_nat_gateway.wendover_private_b.id
+  }
+
+  tags = {
+    Name = "WendoverPrivate-B"
+  }
+}
+
+resource "aws_route_table_association" "wendover_private_b" {
+  route_table_id  = aws_route_table.wendover_private_b.id
+  subnet_id       = aws_subnet.wendover_private_b.id
 }
 
 resource "aws_db_subnet_group" "wendover" {
-  name        = "wendover-db"
-  subnet_ids  = [
-    aws_subnet.wendover_a.id,
-    aws_subnet.wendover_b.id
+  name = "wendover"
+
+  subnet_ids = [
+    aws_subnet.wendover_private_a.id,
+    aws_subnet.wendover_private_b.id
   ]
 }
 

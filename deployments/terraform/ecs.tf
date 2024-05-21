@@ -11,6 +11,31 @@ resource "aws_ecr_repository" "wendover" {
   }
 }
 
+resource "aws_ecs_cluster" "wendover" {
+  name = "wendover"
+}
+
+resource "aws_ecs_service" "wendover_api" {
+  name            = "wendover-api"
+  launch_type     = "FARGATE"
+  cluster         = aws_ecs_cluster.wendover.id
+  task_definition = aws_ecs_task_definition.wendover_api.arn
+  desired_count   = 1
+
+  network_configuration {
+    subnets  = [
+      aws_subnet.wendover_private_a.id,
+      aws_subnet.wendover_private_b.id
+    ]
+    security_groups = [
+      aws_security_group.wendover_api.id,
+      aws_security_group.wendover_db.id
+    ]
+  }
+
+  depends_on = []
+}
+
 resource "aws_ecs_task_definition" "wendover_api"{
   family                    = "wendover-api"
   requires_compatibilities  = ["FARGATE"]
@@ -102,28 +127,4 @@ resource "aws_ecs_task_definition" "wendover_api"{
       }
     }
   ])
-}
-
-resource "aws_ecs_cluster" "wendover" {
-  name = "wendover"
-}
-
-resource "aws_ecs_service" "wendover_api" {
-  name            = "wendover-api"
-  launch_type     = "FARGATE"
-  cluster         = aws_ecs_cluster.wendover.id
-  task_definition = aws_ecs_task_definition.wendover_api.arn
-  desired_count   = 1
-
-  network_configuration {
-    subnets  = [
-      aws_subnet.wendover_e.id
-    ]
-    security_groups = [
-      aws_security_group.wendover_api.id,
-      aws_security_group.wendover_db.id
-    ]
-  }
-
-  depends_on = []
 }
