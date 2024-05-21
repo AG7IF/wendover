@@ -51,6 +51,19 @@ data "aws_iam_policy_document" "wendover_ecs_execution_role_policy" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    sid     = "SecretsManagerAccess"
+    effect  = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+      "kms:Decrypt"
+    ]
+    resources = [
+      aws_db_instance.wendover.master_user_secret[0].kms_key_id,
+      aws_db_instance.wendover.master_user_secret[0].secret_arn
+    ]
+  }
 }
 
 resource "aws_iam_role" "wendover_ecs_execution_role" {
