@@ -68,13 +68,15 @@ func (s *Server) setupRoutes(version string) {
 	v1 := s.engine.Group(rootPath)
 
 	healthcheckHandler := handlers.NewHealthcheckHandler(version)
-	healthcheckHandler.SetupRoutes(v1, s.auth.MiddlewareFunc())
+	healthcheckHandler.SetupRoutes(v1)
 
-	activityHandler := handlers.NewActivityHandler(s.repo)
-	activityHandler.SetupRoutes(v1, s.auth.MiddlewareFunc())
+	/*
+		activityHandler := handlers.NewActivityHandler(s.repo)
+		activityHandler.SetupRoutes(v1, s.auth.MiddlewareFunc())
 
-	userHandler := handlers.NewUserHandler(s.repo)
-	userHandler.SetupRoutes(v1, s.auth.MiddlewareFunc())
+		userHandler := handlers.NewUserHandler(s.repo)
+		userHandler.SetupRoutes(v1, s.auth.MiddlewareFunc())
+	*/
 }
 
 func (s *Server) Run(addr string) error {

@@ -68,6 +68,7 @@ resource "aws_ecs_task_definition" "wendover_api"{
         startPeriod = 300
       }
 
+      /*
       secrets = [
         {
           name      = "WENDOVER_AWS_COGNITO_ISS"
@@ -114,6 +115,7 @@ resource "aws_ecs_task_definition" "wendover_api"{
           valueFrom = aws_ssm_parameter.wendover-server-root_path.arn
         },
       ]
+      */
 
       logConfiguration = {
         logDriver = "awslogs"
