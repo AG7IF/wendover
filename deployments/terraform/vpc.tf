@@ -37,6 +37,14 @@ Subnet PublicC: 10.0.0.0/22
 Subnet PrivateC: 10.0.4.0/22
 0000 1010 | 0000 0000 | 0000 0100 | 0000 0000
 1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
+
+Subnet PublicB: 10.0.8.0/22
+0000 1010 | 0000 0000 | 0000 1000 | 0000 0000
+1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
+
+Subnet PrivateB: 10.0.12.0/22
+0000 1010 | 0000 0000 | 0000 1100 | 0000 0000
+1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
 */
 resource "aws_subnet" "wendover_public_c" {
   vpc_id                  = aws_vpc.wendover.id
@@ -100,11 +108,74 @@ resource "aws_route_table_association" "wendover_private_c" {
   subnet_id       = aws_subnet.wendover_private_c.id
 }
 
+resource "aws_subnet" "wendover_public_b" {
+  vpc_id                  = aws_vpc.wendover.id
+  cidr_block              = "10.0.8.0/22"
+  availability_zone       = "${var.region}b"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "WendoverPublic-B"
+  }
+}
+
+resource "aws_route_table_association" "wendover_public_b" {
+  route_table_id  = aws_route_table.wendover_public.id
+  subnet_id       = aws_subnet.wendover_public_b.id
+}
+
+resource "aws_subnet" "wendover_private_b" {
+  vpc_id                  = aws_vpc.wendover.id
+  cidr_block              = "10.0.12.0/22"
+  availability_zone       = "${var.region}b"
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "WendoverPrivate-B"
+  }
+}
+
+resource "aws_eip" "wendover_private_b" {
+  tags = {
+    Name = "WendoverPrivate-B"
+  }
+}
+
+resource "aws_nat_gateway" "wendover_private_b" {
+  allocation_id = aws_eip.wendover_private_b.id
+  subnet_id     = aws_subnet.wendover_private_b.id
+
+  tags = {
+    Name = "WendoverPrivate-B"
+  }
+
+  depends_on = [aws_internet_gateway.wendover]
+}
+
+resource "aws_route_table" "wendover_private_b" {
+  vpc_id = aws_vpc.wendover.id
+
+  route {
+    cidr_block           = "0.0.0.0/0"
+    nat_gateway_id       = aws_nat_gateway.wendover_private_b.id
+  }
+
+  tags = {
+    Name = "WendoverPrivate-B"
+  }
+}
+
+resource "aws_route_table_association" "wendover_private_c" {
+  route_table_id  = aws_route_table.wendover_private_c.id
+  subnet_id       = aws_subnet.wendover_private_c.id
+}
+
 resource "aws_db_subnet_group" "wendover" {
   name = "wendover"
 
   subnet_ids = [
-    aws_subnet.wendover_private_c.id
+    aws_subnet.wendover_private_c.id,
+    aws_subnet.wendover_private_b.id
   ]
 }
 

@@ -64,6 +64,27 @@ data "aws_iam_policy_document" "wendover_ecs_execution_role_policy" {
       aws_db_instance.wendover.master_user_secret[0].secret_arn
     ]
   }
+
+  statement {
+    sid     = "ParamStoreAccess"
+    effect  = "Allow"
+    actions = [
+      "ssm:GetParameters",
+    ]
+    resources = [
+      aws_ssm_parameter.wendover-aws-cognito-iss.arn,
+      aws_ssm_parameter.wendover-aws-cognito-userpool_id.arn,
+      aws_ssm_parameter.wendover-aws-log_group_name.arn,
+      aws_ssm_parameter.wendover-aws-log_stream_name.arn,
+      aws_ssm_parameter.wendover-config-directory.arn,
+      aws_ssm_parameter.wendover-database-host.arn,
+      aws_ssm_parameter.wendover-database-port.arn,
+      aws_ssm_parameter.wendover-database-name.arn,
+      aws_ssm_parameter.wendover-database-ssl.arn,
+      aws_ssm_parameter.wendover-database-migration-source.arn,
+      aws_ssm_parameter.wendover-server-root_path.arn
+    ]
+  }
 }
 
 resource "aws_iam_role" "wendover_ecs_execution_role" {
