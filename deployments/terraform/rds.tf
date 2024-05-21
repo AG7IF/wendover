@@ -39,7 +39,7 @@ resource "aws_db_parameter_group" "wendover" {
 resource "aws_db_instance" "wendover" {
   identifier                            = "wendover-db"
   instance_class                        = "db.t3.micro"
-  availability_zone                     = "${var.region}a"
+  availability_zone                     = "${var.region}c"
   allocated_storage                     = 20
   parameter_group_name                  = aws_db_parameter_group.wendover.name
   blue_green_update {
