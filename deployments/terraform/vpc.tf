@@ -16,11 +16,6 @@ resource "aws_internet_gateway" "wendover" {
   }
 }
 
-resource "aws_internet_gateway_attachment" "wendover" {
-  vpc_id              = aws_vpc.wendover.id
-  internet_gateway_id = aws_internet_gateway.wendover.id
-}
-
 resource "aws_route_table" "wendover_public" {
   vpc_id = aws_vpc.wendover.id
 
