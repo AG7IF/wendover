@@ -117,8 +117,7 @@ resource "aws_ecs_service" "wendover_api" {
 
   network_configuration {
     subnets  = [
-      aws_subnet.wendover_a.id,
-      aws_subnet.wendover_b.id
+      aws_subnet.wendover_e.id
     ]
     security_groups = [
       aws_security_group.wendover_api.id,

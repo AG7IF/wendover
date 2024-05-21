@@ -23,18 +23,36 @@ resource "aws_route_table" "wendover" {
     cidr_block = "10.0.0.0/16"
     gateway_id = "local"
   }
+
+  tags = {
+    Name = "Wendover"
+  }
 }
+
 /*
 Subnet A:
-0000 0010 | 0000 0000 | 0000 0000 | 0000 0000
+0000 1010 | 0000 0000 | 0000 0000 | 0000 0000
 1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
 
 Subnet B:
-*/
+0000 1010 | 0000 0000 | 0000 0100 | 0000 0000
+1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
 
+Subnet C:
+0000 1010 | 0000 0000 | 0000 1000 | 0000 0000
+1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
+
+Subnet D:
+0000 1010 | 0000 0000 | 0000 1100 | 0000 0000
+1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
+
+Subnet E:
+0000 1010 | 0000 0000 | 0001 0000 | 0000 0000
+1111 1111 | 1111 1111 | 1111 1100 | 0000 0000
+*/
 resource "aws_subnet" "wendover_a" {
   vpc_id              = aws_vpc.wendover.id
-  cidr_block          = "10.0.4.0/22"
+  cidr_block          = "10.0.0.0/22"
   availability_zone   = "${var.region}a"
 
   tags = {
@@ -42,30 +60,14 @@ resource "aws_subnet" "wendover_a" {
   }
 }
 
-resource "aws_eip" "wendover_a" {
-  domain      = "vpc"
-
-  tags = {
-    Name = "Wendover-A"
-  }
-
-  depends_on  = [aws_internet_gateway.wendover]
-}
-
-resource "aws_nat_gateway" "wendover_a" {
-  subnet_id     = aws_subnet.wendover_a.id
-  allocation_id = aws_eip.wendover_a.id
-
-  tags = {
-    Name = "Wendover-A"
-  }
-
-  depends_on    = [aws_internet_gateway.wendover]
+resource "aws_route_table_association" "wendover_a" {
+  subnet_id       = aws_subnet.wendover_a.id
+  route_table_id  = aws_route_table.wendover.id
 }
 
 resource "aws_subnet" "wendover_b" {
   vpc_id              = aws_vpc.wendover.id
-  cidr_block          = "10.0.8.0/22"
+  cidr_block          = "10.0.4.0/22"
   availability_zone   = "${var.region}b"
 
   tags = {
@@ -73,25 +75,83 @@ resource "aws_subnet" "wendover_b" {
   }
 }
 
-resource "aws_eip" "wendover_b" {
-  domain      = "vpc"
+resource "aws_route_table_association" "wendover_b" {
+  subnet_id       = aws_subnet.wendover_b.id
+  route_table_id  = aws_route_table.wendover.id
+}
+
+resource "aws_subnet" "wendover_c" {
+  vpc_id              = aws_vpc.wendover.id
+  cidr_block          = "10.0.8.0/22"
+  availability_zone   = "${var.region}c"
 
   tags = {
-    Name    = "Wendover-B"
+    Name    = "Wendover-C"
+  }
+}
+
+resource "aws_route_table_association" "wendover_c" {
+  subnet_id       = aws_subnet.wendover_c.id
+  route_table_id  = aws_route_table.wendover.id
+}
+
+resource "aws_subnet" "wendover_d" {
+  vpc_id              = aws_vpc.wendover.id
+  cidr_block          = "10.0.12.0/22"
+  availability_zone   = "${var.region}d"
+
+  tags = {
+    Name    = "Wendover-D"
+  }
+}
+
+resource "aws_route_table_association" "wendover_d" {
+  subnet_id       = aws_subnet.wendover_d.id
+  route_table_id  = aws_route_table.wendover.id
+}
+
+resource "aws_subnet" "wendover_e" {
+  vpc_id              = aws_vpc.wendover.id
+  cidr_block          = "10.0.16.0/22"
+
+  tags = {
+    Name    = "Wendover-E"
+  }
+}
+
+resource "aws_eip" "wendover_e" {
+  domain      = "vpc"
+
+  depends_on  = [aws_internet_gateway.wendover]
+}
+
+resource "aws_nat_gateway" "wendover_e" {
+  subnet_id     = aws_subnet.wendover_e.id
+  allocation_id = aws_eip.wendover_e.id
+
+  tags = {
+    Name = "Wendover-E"
   }
 
   depends_on  = [aws_internet_gateway.wendover]
 }
 
-resource "aws_nat_gateway" "wendover_b" {
-  subnet_id     = aws_subnet.wendover_b.id
-  allocation_id = aws_eip.wendover_b.id
+resource "aws_route_table" "wendover_e" {
+  vpc_id = aws_vpc.wendover.id
 
-  tags = {
-    Name    = "Wendover-B"
+  route {
+    cidr_block      = aws_subnet.wendover_e.cidr_block
+    nat_gateway_id  = aws_nat_gateway.wendover_e.id
   }
 
-  depends_on    = [aws_internet_gateway.wendover]
+  tags = {
+    Name = "Wendover-E"
+  }
+}
+
+resource "aws_route_table_association" "wendover_e" {
+  subnet_id       = aws_subnet.wendover_e.id
+  route_table_id  = aws_route_table.wendover_e.id
 }
 
 resource "aws_db_subnet_group" "wendover" {
