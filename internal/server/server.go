@@ -4,6 +4,7 @@ import (
 	cognito "github.com/akhettar/gin-jwt-cognito"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 
 	"github.com/ag7if/wendover/internal/config"
@@ -67,6 +68,7 @@ func (s *Server) setupRoutes(version string) {
 	rootPath := viper.GetString(config.ServerRootPath)
 	v1 := s.engine.Group(rootPath)
 
+	log.Info().Str("base_path", v1.BasePath()).Msg("Registering healthcheck handler")
 	healthcheckHandler := handlers.NewHealthcheckHandler(version)
 	healthcheckHandler.SetupRoutes(v1)
 
