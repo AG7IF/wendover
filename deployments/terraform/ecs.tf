@@ -29,7 +29,6 @@ resource "aws_ecs_service" "wendover_api" {
     security_groups = [
       aws_security_group.wendover_api.id
     ]
-    assign_public_ip = true
   }
 }
 
@@ -55,6 +54,10 @@ resource "aws_ecs_task_definition" "wendover_api"{
         {
           containerPort = 80
           hostPort      = 80
+        },
+        {
+          containerPort = 443
+          hostPort      = 443
         }
       ]
 
