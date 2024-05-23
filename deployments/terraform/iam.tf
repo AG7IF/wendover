@@ -96,6 +96,16 @@ resource "aws_iam_role" "wendover_ecs_execution_role" {
 // ECS Task Role
 data "aws_iam_policy_document" "wendover_ecs_task_role" {
   statement {
+    effect = "Allow"
+    actions = [
+      "ecr:BatchGetImage",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:GetAuthorizationToken"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
     sid     = "SecretsManagerAccess"
     effect  = "Allow"
     actions = [
