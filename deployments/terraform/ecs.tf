@@ -24,14 +24,12 @@ resource "aws_ecs_service" "wendover_api" {
 
   network_configuration {
     subnets  = [
-      aws_subnet.wendover_public_c.id
+      aws_subnet.wendover_private_c.id
     ]
     security_groups = [
       aws_security_group.wendover_api.id
     ]
   }
-
-  depends_on = []
 }
 
 resource "aws_ecs_task_definition" "wendover_api"{
@@ -53,10 +51,6 @@ resource "aws_ecs_task_definition" "wendover_api"{
       memory        = 2048
       interactive   = true
       portMappings  = [
-        {
-          containerPort = 22
-          hostPort      = 22
-        },
         {
           containerPort = 80
           hostPort      = 80
