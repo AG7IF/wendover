@@ -29,6 +29,7 @@ resource "aws_ecs_service" "wendover_api" {
     security_groups = [
       aws_security_group.wendover_api.id
     ]
+    assign_public_ip = true
   }
 }
 
