@@ -1,0 +1,58 @@
+@startuml
+!theme spacelab
+skinparam linetype ortho
+
+entity Activity {
+    id: uuid
+    key: string
+    name: string
+    location: string
+    start: datetime
+    end: datetime
+    cadetStudentFee: uint
+    cadetCadreFee: uint
+    seniorStudentFee: uint
+    seniorCadreFee: uint
+}
+
+entity Participant {
+    id: uuid
+    capid: uint
+    last_name: string
+    first_name: string
+    middle_name: string
+    member_type: enum<member_type>
+    grade: enum<grade>
+    home_unit: string
+    gender: enum<gender>
+    ageAtEventStart: uint
+    ageAtEventEnd: uint
+    shirtSize: string
+    membership_expires: date
+    eservices_email: string
+    unit_approval_date: date
+    cadet_parent_primary_phone: string
+    cadet_parent_primary_email: string
+    unit_cc_name: string
+    unit_cc_email: string
+    wing_cc_name: string
+    wing_cc_email: string
+    cppt_expires: date
+    icut_date: date
+    capdl_expires: date
+}
+
+entity StaffRole {
+}
+
+entity ActivityUnit {
+}
+
+Activity ||--|| ActivityUnit
+ActivityUnit ||--o{ ActivityUnit
+ActivityUnit ||--o{ StaffRole
+ActivityUnit ||--|{ UnitAssignment
+UnitAssignment ||--o{ Participant
+StaffRole ||--o| Participant
+
+@enduml
