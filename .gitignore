@@ -23,3 +23,6 @@ go.work
 # Project ignores
 bin/
 testdata/
+deployments/terraform/.terraform/*
+.terraform.lock.hcl
+*.xlsx
