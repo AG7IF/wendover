@@ -9,8 +9,7 @@ import (
 type ShirtSize int
 
 const (
-	XXXS ShirtSize = iota
-	XXS
+	UnknownSize = iota
 	XS
 	S
 	M
@@ -18,39 +17,45 @@ const (
 	XL
 	XXL
 	XXXL
+	XXXXL
+	XXXXXL
 )
 
-func ParseShirtSize(s string) (ShirtSize, error) {
-	switch strings.ToLower(s) {
-	case "xxxs":
-		return XXXS, nil
-	case "xxs":
-		return XXS, nil
-	case "xs":
-		return XS, nil
-	case "s":
-		return S, nil
-	case "m":
-		return M, nil
-	case "l":
-		return L, nil
-	case "xl":
-		return XL, nil
-	case "xxl":
-		return XXL, nil
-	case "xxxl":
-		return XXXL, nil
+func ParseShirtSize(s string) ShirtSize {
+	switch strings.ToUpper(strings.TrimSpace(s)) {
+	case "XS":
+		return XS
+	case "S":
+		return S
+	case "M":
+		return M
+	case "L":
+		return L
+	case "XL":
+		return XL
+	case "XXL":
+		fallthrough
+	case "2XL":
+		return XXL
+	case "XXXL":
+		fallthrough
+	case "3XL":
+		return XXXL
+	case "XXXXL":
+		fallthrough
+	case "4XL":
+		return XXXXL
+	case "XXXXXL":
+		fallthrough
+	case "5XL":
+		return XXXXXL
 	default:
-		return -1, errors.Errorf("unrecognized shirt size: %s", s)
+		return UnknownSize
 	}
 }
 
 func (ss ShirtSize) String() string {
 	switch ss {
-	case XXXS:
-		return "XXXS"
-	case XXS:
-		return "XXS"
 	case XS:
 		return "XS"
 	case S:
@@ -62,9 +67,13 @@ func (ss ShirtSize) String() string {
 	case XL:
 		return "XL"
 	case XXL:
-		return "XXL"
+		return "2XL"
 	case XXXL:
-		return "XXXL"
+		return "3XL"
+	case XXXXL:
+		return "4XL"
+	case XXXXXL:
+		return "5XL"
 	default:
 		panic(errors.Errorf("invalid shirt size: %d", ss))
 	}

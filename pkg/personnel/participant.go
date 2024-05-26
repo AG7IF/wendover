@@ -20,16 +20,17 @@ type Participant struct {
 	shirtSize               ShirtSize
 	membershipExpires       time.Time
 	eServicesEmail          string
+	homeUnit                HomeUnit
 	unitApprovalDate        *time.Time
-	cadetParentPrimaryPhone *string
-	cadetParentPrimaryEmail *string
+	cadetParentPrimaryPhone string
+	cadetParentPrimaryEmail string
 	unitCCName              string
 	unitCCEmail             string
 	wingCCName              string
 	wingCCEmail             string
-	cpptExpires             time.Time
-	icutDate                time.Time
-	capDlExpires            time.Time
+	cpptExpires             *time.Time
+	icutDate                *time.Time
+	capDlExpires            *time.Time
 }
 
 func NewParticipant(
@@ -46,16 +47,17 @@ func NewParticipant(
 	shirtSize ShirtSize,
 	membershipExpires time.Time,
 	eServicesEmail string,
+	homeUnit HomeUnit,
 	unitApprovalDate *time.Time,
-	cadetParentPrimaryPhone *string,
-	cadetParentPrimaryEmail *string,
+	cadetParentPrimaryPhone string,
+	cadetParentPrimaryEmail string,
 	unitCCName string,
 	unitCCEmail string,
 	wingCCName string,
 	wingCCEmail string,
-	cpptExpires time.Time,
-	icutDate time.Time,
-	capDlExpires time.Time,
+	cpptExpires *time.Time,
+	icutDate *time.Time,
+	capDlExpires *time.Time,
 ) Participant {
 	return Participant{
 		id:                      id,
@@ -71,6 +73,7 @@ func NewParticipant(
 		shirtSize:               shirtSize,
 		membershipExpires:       membershipExpires,
 		eServicesEmail:          eServicesEmail,
+		homeUnit:                homeUnit,
 		unitApprovalDate:        unitApprovalDate,
 		cadetParentPrimaryPhone: cadetParentPrimaryPhone,
 		cadetParentPrimaryEmail: cadetParentPrimaryEmail,
@@ -140,11 +143,11 @@ func (p Participant) UnitApprovalDate() *time.Time {
 	return p.unitApprovalDate
 }
 
-func (p Participant) CadetParentPrimaryPhone() *string {
+func (p Participant) CadetParentPrimaryPhone() string {
 	return p.cadetParentPrimaryPhone
 }
 
-func (p Participant) CadetParentPrimaryEmail() *string {
+func (p Participant) CadetParentPrimaryEmail() string {
 	return p.cadetParentPrimaryEmail
 }
 
@@ -164,14 +167,14 @@ func (p Participant) WingCCEmail() string {
 	return p.wingCCEmail
 }
 
-func (p Participant) CpptExpires() time.Time {
+func (p Participant) CpptExpires() *time.Time {
 	return p.cpptExpires
 }
 
-func (p Participant) IcutDate() time.Time {
+func (p Participant) IcutDate() *time.Time {
 	return p.icutDate
 }
 
-func (p Participant) CapDlExpires() time.Time {
+func (p Participant) CapDlExpires() *time.Time {
 	return p.capDlExpires
 }

@@ -80,14 +80,20 @@ func ParseGrade(s string) (Grade, error) {
 	case "C/Col":
 		return CdtCol, nil
 	case "C/Lt Col":
+		fallthrough
+	case "C/LtCol":
 		return CdtLtCol, nil
 	case "C/Maj":
 		return CdtMaj, nil
 	case "C/Capt":
 		return CdtCapt, nil
 	case "C/1st Lt":
+		fallthrough
+	case "C/1stLt":
 		return CdtFirstLt, nil
 	case "C/2d Lt":
+		fallthrough
+	case "C/2dLt":
 		return CdtSecondLt, nil
 	case "C/CMSgt":
 		return CdtCMSgt, nil
