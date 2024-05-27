@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"github.com/google/uuid"
+
 	"github.com/ag7if/wendover/pkg/auth"
 	"github.com/ag7if/wendover/pkg/org"
 )
@@ -19,4 +21,10 @@ type Repository interface {
 	DeleteUser(username string) error
 	AddUserRole(username, activityKey string, userRole auth.Role) (auth.User, error)
 	RemoveUserRole(username, activityKey string) (auth.User, error)
+
+	InsertActivityUnits(activityId, superiorUnitId uuid.UUID, activityUnit []org.ActivityUnit) ([]org.ActivityUnit, error)
+	SelectActivityUnitsByActivity(activity org.Activity) ([]org.ActivityUnit, error)
+	SelectActivityUnit(id uuid.UUID) (org.ActivityUnit, error)
+	UpdateActivityUnit(id uuid.UUID, activity org.ActivityUnit) (org.ActivityUnit, error)
+	DeleteActivityUnit(id uuid.UUID) error
 }

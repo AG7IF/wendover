@@ -18,6 +18,7 @@ type Activity struct {
 	cadetCadreFee    uint
 	seniorStudentFee uint
 	seniorCadreFee   uint
+	activityUnits    []ActivityUnit
 }
 
 func NewActivity(
@@ -46,42 +47,50 @@ func NewActivity(
 	}
 }
 
-func (a Activity) ID() uuid.UUID {
+func (a *Activity) ID() uuid.UUID {
 	return a.id
 }
 
-func (a Activity) Key() string {
+func (a *Activity) Key() string {
 	return a.key
 }
 
-func (a Activity) Name() string {
+func (a *Activity) Name() string {
 	return a.name
 }
 
-func (a Activity) Location() string {
+func (a *Activity) Location() string {
 	return a.location
 }
 
-func (a Activity) Start() time.Time {
+func (a *Activity) Start() time.Time {
 	return a.start
 }
 
-func (a Activity) End() time.Time {
+func (a *Activity) End() time.Time {
 	return a.end
 }
 
-func (a Activity) CadetStudentFee() uint {
+func (a *Activity) CadetStudentFee() uint {
 	return a.cadetStudentFee
 }
 
-func (a Activity) CadetCadreFee() uint {
+func (a *Activity) CadetCadreFee() uint {
 	return a.cadetCadreFee
 }
 
-func (a Activity) SeniorStudentFee() uint {
+func (a *Activity) SeniorStudentFee() uint {
 	return a.seniorStudentFee
 }
 
-func (a Activity) SeniorCadreFee() uint {
+func (a *Activity) SeniorCadreFee() uint {
 	return a.seniorCadreFee
+}
+
+func (a *Activity) ActivityUnits() []ActivityUnit {
+	return a.activityUnits
+}
+
+func (a *Activity) AddActivityUnit(unit ActivityUnit) {
+	a.activityUnits = append(a.activityUnits, unit)
 }

@@ -67,6 +67,31 @@ func insertStatement(p preparer, t table) (*sql.Stmt, error) {
 	return p.Prepare(query)
 }
 
+func bulkInsertStatement(p preparer, t table, length int) (*sql.Stmt, error) {
+
+	n := 0
+	var values []string
+	for i := 0; i < length; i++ {
+		var placeholders []string
+		for range t.Columns() {
+			n++
+			placeholders = append(placeholders, fmt.Sprintf("$%d", n))
+		}
+
+		v := fmt.Sprintf("(%s)", strings.Join(placeholders, ","))
+		values = append(values, v)
+	}
+
+	query := fmt.Sprintf("INSERT INTO %s (%s) VALUES %s RETURNING, id,%s;",
+		t.TableName(),
+		strings.Join(t.Columns(), ","),
+		strings.Join(values, ","),
+		strings.Join(t.Columns(), ","),
+	)
+
+	return p.Prepare(query)
+}
+
 // insertAssocStatement prepares an INSERT query for an association table. The key differences between this query and
 // the query that is prepared by insertStatement are:
 //  1. the RETURNING clause is omitted, and
