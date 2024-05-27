@@ -20,7 +20,14 @@ func NewActivityHandler(repo repositories.Repository) ActivityHandler {
 	return ActivityHandler{repo: repo}
 }
 
+func (ah *ActivityHandler) Options(c *gin.Context) {
+	setHeaders(c)
+	c.Header("Allow", "GET,POST,PUT,DELETE,OPTIONS")
+	c.AbortWithStatus(http.StatusNoContent)
+}
+
 func (ah *ActivityHandler) Create(c *gin.Context) {
+	setHeaders(c)
 	av := &views.ActivityView{}
 
 	err := c.BindJSON(av)
@@ -45,6 +52,7 @@ func (ah *ActivityHandler) Create(c *gin.Context) {
 }
 
 func (ah *ActivityHandler) FetchAll(c *gin.Context) {
+	setHeaders(c)
 	// TODO: Query by authentication parameters
 	a, err := ah.repo.SelectActivities()
 	if err != nil {
@@ -63,6 +71,7 @@ func (ah *ActivityHandler) FetchAll(c *gin.Context) {
 }
 
 func (ah *ActivityHandler) Fetch(c *gin.Context) {
+	setHeaders(c)
 	key := strings.ToUpper(c.Param("key"))
 
 	a, err := ah.repo.SelectActivity(key)
@@ -78,6 +87,7 @@ func (ah *ActivityHandler) Fetch(c *gin.Context) {
 }
 
 func (ah *ActivityHandler) Update(c *gin.Context) {
+	setHeaders(c)
 	key := strings.ToUpper(c.Param("key"))
 	av := &views.ActivityView{}
 	err := c.BindJSON(av)
@@ -102,6 +112,7 @@ func (ah *ActivityHandler) Update(c *gin.Context) {
 }
 
 func (ah *ActivityHandler) Delete(c *gin.Context) {
+	setHeaders(c)
 	key := strings.ToUpper(c.Param("key"))
 	err := ah.repo.DeleteActivity(key)
 	if err != nil {
@@ -114,6 +125,7 @@ func (ah *ActivityHandler) Delete(c *gin.Context) {
 }
 
 func (ah *ActivityHandler) SetupRoutes(router *gin.RouterGroup) {
+	router.OPTIONS("/activity", ah.Options)
 	router.POST("/activity", ah.Create)
 	router.GET("/activity", ah.FetchAll)
 	router.GET("/activity/:key", ah.Fetch)
