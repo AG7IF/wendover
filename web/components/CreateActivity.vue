@@ -9,8 +9,8 @@
   const seniorStudentFee = ref(0)
   const seniorCadreFee = ref(0)
 
-  function onSubmit() {
-    const response = $fetch('http://localhost:8080/api/v1/activity', {
+  async function onSubmit() {
+    const response = await $fetch('http://localhost:8080/api/v1/activity', {
       method: 'POST',
       body: {
         key: activityKey.value,
@@ -24,6 +24,8 @@
         senior_cadre_fee: Math.trunc(parseFloat(seniorCadreFee.value) * 100),
       }
     })
+
+    navigateTo(`/activities/${activityKey.value}`)
   }
 </script>
 

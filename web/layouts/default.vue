@@ -7,7 +7,7 @@ const drawer = ref(false)
 <template>
   <v-app id="inspire">
     <v-navigation-drawer v-model="drawer">
-      <!--  -->
+      <li><NuxtLink to="/activities">Activities</NuxtLink></li>
     </v-navigation-drawer>
 
     <v-app-bar>
