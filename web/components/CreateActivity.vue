@@ -30,28 +30,61 @@
 </script>
 
 <template>
-<v-card title="New Activity">
-  <v-form @submit.prevent="onSubmit">
-    <v-text-field label="Key" v-model="activityKey"/>
-    <v-text-field label="Name" v-model="activityName"/>
-    <v-text-field label="Location" v-model="activityLocation"/>
-    <v-row>
-      <v-col>
-        <v-label>Start Date</v-label>
-        <v-date-picker v-model="activityStart"/>
-      </v-col>
-      <v-col>
-        <v-label>End Date</v-label>
-        <v-date-picker v-model="activityEnd"/>
-      </v-col>
-    </v-row>
-    <v-text-field label="Cadet Student Fee" type="number" v-model="cadetStudentFee"/>
-    <v-text-field label="Cadet Cadre Fee" type="number" v-model="cadetCadreFee"/>
-    <v-text-field label="Senior Student Fee" type="number" v-model="seniorStudentFee"/>
-    <v-text-field label="Senior Cadre Fee" type="number" v-model="seniorCadreFee"/>
-    <v-btn type="submit">Create</v-btn>
-  </v-form>
-</v-card>
+  <div>
+    <h1>New Activity</h1>
+
+    <table>
+      <tr>
+        <td><label for="activityKey" class="ml-2">Activity Key</label></td>
+        <td><InputText id="activityKey" type="text" v-model="activityKey"/></td>
+      </tr>
+
+      <tr>
+        <td><label for="activityName" class="ml-2">Activity Name</label></td>
+        <td><InputText id="activityName" type="text" v-model="activityName"/></td>
+      </tr>
+
+      <tr>
+        <td><label for="activityLocation" class="ml-2">Location</label></td>
+        <td><InputText id="activityLocation" type="text" v-model="activityLocation"/></td>
+      </tr>
+
+      <tr>
+        <td><label for="activityStart" class="ml-2">Start Date</label></td>
+        <td><Calendar id="activityStart" v-model="activityStart" dateFormat="dd-M-yy" showIcon/></td>
+      </tr>
+
+      <tr>
+        <td><label for="activityEnd" class="ml-2">End Date</label></td>
+        <td><Calendar id="activityEnd" v-model="activityEnd" dateFormat="dd-M-yy" showIcon/></td>
+      </tr>
+
+      <tr>
+        <td><label for="cadetStudentFee" class="ml-2">Cadet Student Fee</label></td>
+        <td><InputText id="cadetStudentFee" type="number" v-model="cadetStudentFee"/></td>
+      </tr>
+
+      <tr>
+        <td><label for="cadetCadreFee" class="ml-2">Cadet Cadre Fee</label></td>
+        <td><InputText id="cadetCadreFee" type="number" v-model="cadetCadreFee"/></td>
+      </tr>
+
+      <tr>
+        <td><label for="seniorStudentFee" class="ml-2">Senior Student Fee</label></td>
+        <td><InputText id="seniorStudentFee" type="number" v-model="seniorStudentFee"/></td>
+      </tr>
+
+      <tr>
+        <td><label for="seniorCadreFee" class="ml-2">Senior Cadre Fee</label></td>
+        <td><InputText id="seniorCadreFee" type="number" v-model="seniorCadreFee"/></td>
+      </tr>
+
+      <tr>
+        <td><Button label="Create" @click="onSubmit"/></td>
+      </tr>
+    </table>
+
+  </div>
 
 </template>
 
