@@ -17,8 +17,10 @@ type RoleActivityNameView struct {
 }
 
 func NewRoleView(role auth.UserRole) RoleActivityNameView {
+	roleActivity := role.Activity()
+
 	return RoleActivityNameView{
-		ActivityName: role.Activity().Name(),
+		ActivityName: roleActivity.Name(),
 		Role:         role.Role(),
 	}
 }

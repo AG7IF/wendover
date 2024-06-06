@@ -1,1 +1,1 @@
-DROP TABLE activities;
+DROP SCHEMA wendover CASCADE;

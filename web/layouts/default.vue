@@ -1,23 +1,20 @@
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
 
-const drawer = ref(false)
 </script>
 
 <template>
-  <v-app id="inspire">
-    <v-navigation-drawer v-model="drawer">
-      <li><NuxtLink to="/activities">Activities</NuxtLink></li>
-    </v-navigation-drawer>
-
-    <v-app-bar>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-
-      <v-app-bar-title>CAPForms.net</v-app-bar-title>
-    </v-app-bar>
-
-    <v-main>
-      <slot/>
-    </v-main>
-  </v-app>
+  <div class="font-body">
+    <Header />
+    <div class="flex flex-row">
+      <div class="w-1/4"></div>
+      <slot />
+      <div class="w-1/4"></div>
+    </div>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+h1 {
+
+}
+</style>

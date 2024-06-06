@@ -82,7 +82,7 @@ func bulkInsertStatement(p preparer, t table, length int) (*sql.Stmt, error) {
 		values = append(values, v)
 	}
 
-	query := fmt.Sprintf("INSERT INTO %s (%s) VALUES %s RETURNING, id,%s;",
+	query := fmt.Sprintf("INSERT INTO %s (%s) VALUES %s RETURNING id,%s;",
 		t.TableName(),
 		strings.Join(t.Columns(), ","),
 		strings.Join(values, ","),

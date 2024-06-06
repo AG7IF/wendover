@@ -22,9 +22,16 @@ type Repository interface {
 	AddUserRole(username, activityKey string, userRole auth.Role) (auth.User, error)
 	RemoveUserRole(username, activityKey string) (auth.User, error)
 
-	InsertActivityUnits(activityId, superiorUnitId uuid.UUID, activityUnit []org.ActivityUnit) ([]org.ActivityUnit, error)
-	SelectActivityUnitsByActivity(activity org.Activity) ([]org.ActivityUnit, error)
+	InsertActivityUnit(activityId, superiorUnitId uuid.UUID, activityUnit org.ActivityUnit) (org.ActivityUnit, error)
+	InsertActivityHierachy(activityId uuid.UUID, rootUnit org.ActivityUnit) (org.ActivityUnit, error)
+	SelectActivityHierarchy(activityId uuid.UUID) (org.ActivityUnit, error)
 	SelectActivityUnit(id uuid.UUID) (org.ActivityUnit, error)
 	UpdateActivityUnit(id uuid.UUID, activity org.ActivityUnit) (org.ActivityUnit, error)
 	DeleteActivityUnit(id uuid.UUID) error
+}
+
+type Table interface {
+	TableName() string
+	Columns() []string
+	KeyColumn() string
 }

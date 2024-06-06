@@ -119,7 +119,9 @@ func (pr *PostgresRepository) SelectUser(username string) (auth.User, error) {
 			return auth.User{}, errors.WithStack(processError("user", username, err))
 		}
 
-		if userRole.Activity().ID() == uuid.Nil {
+		roleActivity := userRole.Activity()
+
+		if roleActivity.ID() == uuid.Nil {
 			continue
 		}
 
@@ -127,7 +129,7 @@ func (pr *PostgresRepository) SelectUser(username string) (auth.User, error) {
 			userRoles = make(map[string]auth.UserRole)
 		}
 
-		userRoles[userRole.Activity().Key()] = userRole
+		userRoles[roleActivity.Key()] = userRole
 	}
 
 	return auth.NewUser(userMap["id"].(uuid.UUID), userMap["username"].(string), userRoles), nil

@@ -1,4 +1,4 @@
-CREATE TYPE role AS ENUM('DIRECTOR', 'ADMIN', 'STAFF');
+CREATE TYPE wendover.role AS ENUM('DIRECTOR', 'ADMIN', 'STAFF');
 
 CREATE TABLE wendover.users (
     id UUID PRIMARY KEY DEFAULT wendover.uuid_generate_v4(),
@@ -8,6 +8,6 @@ CREATE TABLE wendover.users (
 CREATE TABLE wendover.user_roles (
     user_id UUID NOT NULL REFERENCES wendover.users(id) ON DELETE CASCADE,
     activity_id UUID NOT NULL REFERENCES wendover.activities(id) ON DELETE CASCADE,
-    role role NOT NULL DEFAULT 'STAFF',
+    role wendover.role NOT NULL DEFAULT 'STAFF',
     PRIMARY KEY (user_id, activity_id)
 );
