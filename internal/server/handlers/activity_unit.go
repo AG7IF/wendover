@@ -23,8 +23,34 @@ func (a *ActivityUnitHandler) Options(c *gin.Context) {
 }
 
 func (a *ActivityUnitHandler) Create(c *gin.Context) {
-	setHeaders(c)
+	/*
+		setHeaders(c)
+		activityKey := strings.ToUpper(c.Param("key"))
+		superiorUnitID, err := uuid.Parse(c.Param("id"))
+		if err != nil {
+			err = views.ErrInvalidValue{
+				FieldName: "superior_unit_id",
+			}
+			log.Error().Err(err).Str("superior_unit_id", c.Param("id")).Msg("failed to parse ID")
+			ResolveError(c, err)
+			return
+		}
 
+		auv := &views.ActivityUnitView{}
+
+		err := c.BindJSON(auv)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to bind activity unit view")
+			ResolveError(c, err)
+			return
+		}
+
+		au := auv.ToDomainObject()
+
+		res, err := a.repo.InsertActivityUnit()
+	*/
+	//TODO implement me
+	panic("implement me")
 }
 
 func (a *ActivityUnitHandler) FetchAll(c *gin.Context) {
@@ -49,7 +75,7 @@ func (a *ActivityUnitHandler) Delete(c *gin.Context) {
 
 func (a *ActivityUnitHandler) SetupRoutes(router *gin.RouterGroup) {
 	router.OPTIONS("/activity/:key/units", a.Options)
-	router.POST("/activity/:key/units", a.Create)
+	router.POST("/activity/:key/units/:id", a.Create)
 	router.GET("/activity/:key/units", a.FetchAll)
 	router.GET("/activity/:key/units/:id", a.Fetch)
 	router.PUT("/activity/:key/units/:id", a.Update)

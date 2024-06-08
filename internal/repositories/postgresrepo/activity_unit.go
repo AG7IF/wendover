@@ -5,7 +5,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
 
 	"github.com/ag7if/wendover/internal/repositories"
 	"github.com/ag7if/wendover/pkg/org"
@@ -48,7 +47,7 @@ func mapRowToActivityUnit(row scannable) (org.ActivityUnit, uuid.UUID, error) {
 }
 
 func (pr *PostgresRepository) insertActivityUnit(tx *sql.Tx, activityId, superiorUnitId uuid.UUID, activityUnit org.ActivityUnit) (org.ActivityUnit, error) {
-	stmt, err := insertStatement(tx, activityUnitsTable)
+	stmt, err := upsertStatement(tx, activityUnitsTable)
 	if err != nil {
 		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
 	}
@@ -56,6 +55,7 @@ func (pr *PostgresRepository) insertActivityUnit(tx *sql.Tx, activityId, superio
 	var row *sql.Row
 	if superiorUnitId == uuid.Nil {
 		row = stmt.QueryRow(
+			activityUnit.ID(),
 			activityId,
 			uuid.Nil,
 			nil,
@@ -63,6 +63,7 @@ func (pr *PostgresRepository) insertActivityUnit(tx *sql.Tx, activityId, superio
 		)
 	} else {
 		row = stmt.QueryRow(
+			activityUnit.ID(),
 			activityId,
 			uuid.Nil,
 			superiorUnitId,
@@ -78,33 +79,15 @@ func (pr *PostgresRepository) insertActivityUnit(tx *sql.Tx, activityId, superio
 	return insertedActivityUnit, nil
 }
 
-func (pr *PostgresRepository) InsertActivityUnit(activityId, superiorUnitId uuid.UUID, activityUnit org.ActivityUnit) (org.ActivityUnit, error) {
-	tx, err := pr.db.Begin()
-	if err != nil {
-		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
-	}
-
-	insertedActivityUnit, err := pr.insertActivityUnit(tx, activityId, superiorUnitId, activityUnit)
-	if err != nil {
-		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
-	}
-
-	return insertedActivityUnit, nil
-}
-
 func (pr *PostgresRepository) bulkInsertActivityUnits(tx *sql.Tx, activityId, superiorUnitId uuid.UUID, activityUnits []org.ActivityUnit) ([]org.ActivityUnit, error) {
-	stmt, err := bulkInsertStatement(tx, activityUnitsTable, len(activityUnits))
+	stmt, err := bulkUpsertStatement(tx, activityUnitsTable, len(activityUnits))
 	if err != nil {
 		return nil, errors.WithStack(processError("activityUnit", "", err))
 	}
 
 	var values []any
 	for _, unit := range activityUnits {
+		values = append(values, unit.ID())
 		values = append(values, activityId)
 		values = append(values, nil)
 		if superiorUnitId == uuid.Nil {
@@ -161,22 +144,27 @@ func (pr *PostgresRepository) insertHierarchy(tx *sql.Tx, activityId uuid.UUID, 
 	return insertedUnit, nil
 }
 
-func (pr *PostgresRepository) InsertActivityHierachy(activityId uuid.UUID, rootUnit org.ActivityUnit) (org.ActivityUnit, error) {
+func (pr *PostgresRepository) InsertActivityUnit(activityKey string, superiorUnitId uuid.UUID, activityUnit org.ActivityUnit) (org.ActivityUnit, error) {
 	tx, err := pr.db.Begin()
 	if err != nil {
 		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
 	}
 
-	insertedRootUnit, err := pr.insertActivityUnit(tx, activityId, uuid.Nil, rootUnit)
+	activityID, err := pr.idByKey(activitiesTable, activityKey)
 	if err != nil {
 		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
 	}
 
-	for _, u := range rootUnit.SubordinateUnits() {
-		insertedRootUnit.AddSubordinateUnit(u)
+	insertedActivityUnit, err := pr.insertActivityUnit(tx, activityID, superiorUnitId, activityUnit)
+	if err != nil {
+		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
 	}
 
-	insertedHierarchy, err := pr.insertHierarchy(tx, activityId, insertedRootUnit)
+	for _, u := range activityUnit.SubordinateUnits() {
+		insertedActivityUnit.AddSubordinateUnit(u)
+	}
+
+	insertedActivityUnit, err = pr.insertHierarchy(tx, activityID, insertedActivityUnit)
 	if err != nil {
 		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
 	}
@@ -186,7 +174,7 @@ func (pr *PostgresRepository) InsertActivityHierachy(activityId uuid.UUID, rootU
 		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
 	}
 
-	return insertedHierarchy, nil
+	return insertedActivityUnit, nil
 }
 
 func (pr *PostgresRepository) buildHierarchy(node org.ActivityUnit,
@@ -205,13 +193,18 @@ func (pr *PostgresRepository) buildHierarchy(node org.ActivityUnit,
 	return node
 }
 
-func (pr *PostgresRepository) SelectActivityHierarchy(activityId uuid.UUID) (org.ActivityUnit, error) {
+func (pr *PostgresRepository) SelectActivityHierarchy(activityKey string) (org.ActivityUnit, error) {
+	activityID, err := pr.idByKey(activitiesTable, activityKey)
+	if err != nil {
+		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
+	}
+
 	stmt, err := selectStatementWhere(pr.db, activityUnitsTable, "activity_id")
 	if err != nil {
 		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
 	}
 
-	rows, err := stmt.Query(activityId)
+	rows, err := stmt.Query(activityID)
 	if err != nil {
 		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
 	}
@@ -227,10 +220,7 @@ func (pr *PostgresRepository) SelectActivityHierarchy(activityId uuid.UUID) (org
 
 	r, ok := res[uuid.Nil]
 	if !ok {
-		return org.ActivityUnit{}, errors.Errorf("activity does not have a root unit: %s", activityId)
-	}
-	if len(r) > 1 {
-		log.Error().Str("activity_id", activityId.String()).Msg("hierarchy query for activity returned more than one root unit")
+		return org.ActivityUnit{}, errors.Errorf("activity does not have a root unit: %s", activityID)
 	}
 
 	root := pr.buildHierarchy(r[0], res)
@@ -239,13 +229,56 @@ func (pr *PostgresRepository) SelectActivityHierarchy(activityId uuid.UUID) (org
 }
 
 func (pr *PostgresRepository) SelectActivityUnit(id uuid.UUID) (org.ActivityUnit, error) {
-	//TODO implement me
-	panic("implement me")
+	stmt, err := selectStatementByID(pr.db, activityUnitsTable)
+	if err != nil {
+		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
+	}
+
+	row := stmt.QueryRow(id)
+
+	activityUnit, _, err := mapRowToActivityUnit(row)
+	if err != nil {
+		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
+	}
+
+	return activityUnit, nil
 }
 
-func (pr *PostgresRepository) UpdateActivityUnit(id uuid.UUID, activity org.ActivityUnit) (org.ActivityUnit, error) {
-	//TODO implement me
-	panic("implement me")
+func (pr *PostgresRepository) UpdateActivityUnit(activityKey string, id, superiorUnitID uuid.UUID, unit org.ActivityUnit) (org.ActivityUnit, error) {
+	tx, err := pr.db.Begin()
+	if err != nil {
+		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
+	}
+
+	activityID, err := pr.idByKey(activitiesTable, activityKey)
+	if err != nil {
+		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
+	}
+
+	stmt, err := updateStatement(tx, activityUnitsTable)
+	if err != nil {
+		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
+	}
+
+	row := stmt.QueryRow(
+		activityID,
+		uuid.Nil,
+		superiorUnitID,
+		unit.UnitName(),
+		id,
+	)
+
+	insertedActivityUnit, _, err := mapRowToActivityUnit(row)
+	if err != nil {
+		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return org.ActivityUnit{}, errors.WithStack(processError("activityUnit", "", err))
+	}
+
+	return insertedActivityUnit, nil
 }
 
 func (pr *PostgresRepository) DeleteActivityUnit(id uuid.UUID) error {

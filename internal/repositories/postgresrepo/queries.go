@@ -6,8 +6,6 @@ import (
 	"strings"
 )
 
-const schemaName = "wendover"
-
 type table struct {
 	tableName string
 	columns   []string
@@ -32,7 +30,7 @@ func newAssocTable(tableName string, fk1Name, fk2Name string, columns []string) 
 }
 
 func (t table) TableName() string {
-	return fmt.Sprintf("%s.%s", schemaName, t.tableName)
+	return t.tableName
 }
 
 func (t table) Columns() []string {
@@ -135,6 +133,84 @@ func insertAssocStatement(p preparer, t table) (*sql.Stmt, error) {
 	return p.Prepare(query)
 }
 
+func upsertStatement(p preparer, t table) (*sql.Stmt, error) {
+	placeholders := []string{"$1"}
+	for i := range t.Columns() {
+		placeholders = append(placeholders, fmt.Sprintf("$%d", i+2))
+	}
+
+	var setClauses []string
+	for _, v := range t.Columns() {
+		set := fmt.Sprintf("EXCLUDED.%s", v)
+		setClauses = append(setClauses, set)
+	}
+
+	var onConflict string
+	onConflict = fmt.Sprintf("ON CONFLICT (id) DO UPDATE SET (%s) = (%s)",
+		strings.Join(t.Columns(), ","),
+		strings.Join(setClauses, ","),
+	)
+	if t.KeyColumn() != "" {
+		onConflict += fmt.Sprintf(" ON CONFLICT (%s) DO UPDATE %s",
+			t.KeyColumn(),
+			strings.Join(setClauses, ","),
+		)
+	}
+
+	query := fmt.Sprintf("INSERT INTO %s (id,%s) VALUES (%s) %s RETURNING id,%s;",
+		t.TableName(),
+		strings.Join(t.Columns(), ","),
+		strings.Join(placeholders, ","),
+		onConflict,
+		strings.Join(t.Columns(), ","),
+	)
+
+	return p.Prepare(query)
+}
+
+func bulkUpsertStatement(p preparer, t table, length int) (*sql.Stmt, error) {
+	n := 0
+	var values []string
+	for i := 0; i < length; i++ {
+		n++
+		placeholders := []string{fmt.Sprintf("$%d", n)}
+		for range t.Columns() {
+			n++
+			placeholders = append(placeholders, fmt.Sprintf("$%d", n))
+		}
+
+		v := fmt.Sprintf("(%s)", strings.Join(placeholders, ","))
+		values = append(values, v)
+	}
+
+	var setClauses []string
+	for _, v := range t.Columns() {
+		set := fmt.Sprintf("EXCLUDED.%s", v)
+		setClauses = append(setClauses, set)
+	}
+
+	var onConflict string
+	onConflict = fmt.Sprintf("ON CONFLICT (id) DO UPDATE SET (%s) = (%s)",
+		strings.Join(t.Columns(), ","),
+		strings.Join(setClauses, ","),
+	)
+	if t.KeyColumn() != "" {
+		onConflict += fmt.Sprintf(" ON CONFLICT (%s) DO UPDATE %s",
+			t.KeyColumn(),
+			strings.Join(setClauses, ","),
+		)
+	}
+
+	query := fmt.Sprintf("INSERT INTO %s (id,%s) VALUES %s %s RETURNING id,%s;",
+		t.TableName(),
+		strings.Join(t.Columns(), ","),
+		strings.Join(values, ","),
+		onConflict,
+		strings.Join(t.Columns(), ","),
+	)
+
+	return p.Prepare(query)
+}
 func selectStatementAll(p preparer, t table) (*sql.Stmt, error) {
 	query := fmt.Sprintf("SELECT id,%s FROM %s;",
 		strings.Join(t.Columns(), ","),

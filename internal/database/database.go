@@ -34,6 +34,7 @@ func GetDBUrl() string {
 }
 
 func GetDB() (*sql.DB, error) {
+	// TODO: Use connection pools
 	url := GetDBUrl()
 	db, err := sql.Open("pgx", url)
 	if err != nil {

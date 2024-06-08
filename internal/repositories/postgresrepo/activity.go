@@ -92,13 +92,13 @@ func (pr *PostgresRepository) InsertActivity(activity org.Activity) (org.Activit
 		activity.SeniorCadreFee(),
 	)
 
-	rootUnit := org.NewActivityUnit(uuid.Nil, activity.Name())
-	_, err = pr.insertActivityUnit(tx, activity.ID(), uuid.Nil, rootUnit)
+	insertedActivity, err := mapRowToActivity(row)
 	if err != nil {
 		return org.Activity{}, errors.WithStack(processError("activity", activity.Key(), err))
 	}
 
-	insertedActivity, err := mapRowToActivity(row)
+	rootUnit := org.NewActivityUnit(uuid.Nil, activity.Name())
+	_, err = pr.insertActivityUnit(tx, insertedActivity.ID(), uuid.Nil, rootUnit)
 	if err != nil {
 		return org.Activity{}, errors.WithStack(processError("activity", activity.Key(), err))
 	}

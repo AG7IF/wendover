@@ -42,15 +42,21 @@ func down() error {
 
 	err = m.Down()
 	if err != nil {
-		return errors.WithStack(err)
+		if !strings.Contains(err.Error(), "no migration") {
+			return errors.WithStack(err)
+		}
 	}
 
 	version, dirty, err := m.Version()
 	if err != nil {
+		if strings.Contains(err.Error(), "no migration") {
+			log.Info().Str("database", viper.GetString("database.name")).Uint("version", 0).Bool("dirty", false).Msg("down migration complete")
+			return nil
+		}
 		return errors.WithStack(err)
 	}
-	log.Info().Str("database", viper.GetString("database.name")).Uint("version", version).Bool("dirty", dirty).Msg("migration complete")
 
+	log.Info().Str("database", viper.GetString("database.name")).Uint("version", version).Bool("dirty", dirty).Msg("down migration complete")
 	return nil
 }
 
@@ -63,14 +69,16 @@ func up(pollute bool) error {
 
 	err = m.Up()
 	if err != nil {
-		return errors.WithStack(err)
+		if !strings.Contains(err.Error(), "no change") {
+			return errors.WithStack(err)
+		}
 	}
 
 	version, dirty, err := m.Version()
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	log.Info().Str("database", viper.GetString("database.name")).Uint("version", version).Bool("dirty", dirty).Msg("migration complete")
+	log.Info().Str("database", viper.GetString("database.name")).Uint("version", version).Bool("dirty", dirty).Msg("up migration complete")
 
 	if pollute {
 		err = seed(p)
